@@ -10,21 +10,33 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 <script type="text/javascript">
 @using Twilio;
 @{
-  var window.MyLib = {};
 // put your Twilio Application Sid here
-MyLib.appSid = "APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
+string appSid = "APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
 // put your default Twilio Client name here
-MyLib.clientName = "ADavidson";
+string clientName = "ADavidson";
+// put your Twilio API credentials here
+string accountSid = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+string authToken = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
 // get the Twilio Client name from the page request parameters, if given
 if (Request["client"]!=null) {
 clientName = Request["client"];
 }
+
+if (Request["accountSID"]!=null && Request["AuthToken"]!=null ) {
+accountSid = Request["accountSID"]
+authToken = Request["AuthToken"]
 }
+
+var capability = new TwilioCapability(accountSid, authToken);
+capability.AllowClientOutgoing(appSid);
+capability.AllowClientIncoming(clientName);
+string token = capability.GenerateToken();
+} 
 </script>
 <link href="http://static0.twilio.com/resources/quickstart/client.css"
 type="text/css" rel="stylesheet" />
 <script type="text/javascript">
-Twilio.Device.setup('@token');
+ Twilio.Device.setup('@token');
 Twilio.Device.ready(function (device) {
 $("#log").text("Client '@clientName' is ready");
 });
@@ -44,10 +56,6 @@ conn.accept();
 });
 function call() {
 // get the phone number or client to connect the call to
-var capability = new TwilioCapability(accountSid, authToken);
-capability.AllowClientOutgoing(appSid);
-capability.AllowClientIncoming(clientName);
-MyLib.token = capability.GenerateToken();
 params = { "PhoneNumber": $("#number").val() };
 Twilio.Device.connect(params);
 }
@@ -65,13 +73,11 @@ Hangup
 </button>
 <input type="text" id="number" name="number"
 placeholder="Enter a phone number or client to call"/>
-<input type="text" id="number2" name="number2"
-placeholder="Enter your accountSID"/>
-<input type="text" id="number3" name="number3"
-placeholder="Enter your Auth Token"/>
 <div id="log">Loading pigeons...</div>
 </body>
 </html>
+
+
 
 
 
