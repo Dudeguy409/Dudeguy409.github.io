@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hello Client Monkey 5</title>
+<title>Andrew Davidson Twilio Test</title>
 <script type="text/javascript"
 src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 <script type="text/javascript"
@@ -10,21 +10,15 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 <script type="text/javascript">
 @using Twilio;
 @{
-// put your Twilio API credentials here
-string accountSid = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-string authToken = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
+  var window.MyLib = {};
 // put your Twilio Application Sid here
-string appSid = "APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
+MyLib.appSid = "APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
 // put your default Twilio Client name here
-string clientName = "jenny";
+MyLib.clientName = "ADavidson";
 // get the Twilio Client name from the page request parameters, if given
 if (Request["client"]!=null) {
 clientName = Request["client"];
 }
-var capability = new TwilioCapability(accountSid, authToken);
-capability.AllowClientOutgoing(appSid);
-capability.AllowClientIncoming(clientName);
-string token = capability.GenerateToken();
 }
 </script>
 <link href="http://static0.twilio.com/resources/quickstart/client.css"
@@ -50,6 +44,10 @@ conn.accept();
 });
 function call() {
 // get the phone number or client to connect the call to
+var capability = new TwilioCapability(accountSid, authToken);
+capability.AllowClientOutgoing(appSid);
+capability.AllowClientIncoming(clientName);
+MyLib.token = capability.GenerateToken();
 params = { "PhoneNumber": $("#number").val() };
 Twilio.Device.connect(params);
 }
