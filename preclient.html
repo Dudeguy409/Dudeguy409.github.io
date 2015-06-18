@@ -2,11 +2,18 @@
 <html>
 <head>
 <title>Andrew Davidson Twilio Test</title>
-<script type="text/javascript"
-src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-<script type="text/javascript"
-src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+<script type="text/javascript">
+   function start() {
+     var url = "http://dudeguy409.github.io/client.html?"
+        var text_client_label = encodeURI("client");
+        var text_client_val = encodeURI(document.getElementById("number").value);
+        var text_acc_label = encodeURI("accountSID");
+        var text_acc_val = encodeURI(document.getElementById("number2").value);
+        var text_auth_label = encodeURI("AuthToken");
+        var text_auth_val = encodeURI(document.getElementById("number3").value);
+window.location.href = url+"?"+text_client_label+"="text_client_val+"&"+text_acc_label+"="text_acc_val+"&"+text_auth_label+"="text_auth_val;
 </script>
+}
 </head>
 <body>
 <input type="text" id="number" name="number"
@@ -15,7 +22,7 @@ placeholder="Enter your username"/>
 placeholder="Enter your accountSID"/>
 <input type="text" id="number3" name="number3"
 placeholder="Enter your Auth Token"/>
-<button class="start" >
+<button class="start" onclick="start();" >
 Start
 </button>
 </body>
