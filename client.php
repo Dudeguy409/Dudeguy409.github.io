@@ -1,16 +1,13 @@
 <?php
 include 'Services/Twilio/Capability.php';
 // put your Twilio API credentials here
-$accountSid = 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-$authToken = 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy';
+$accountSid = $_GET['accountSID'];
+$authToken = $_GET['authToken'];
 // put your Twilio Application Sid here
-$appSid = 'APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz';
+$appSid = 'APc06db1e469a32bb7a0bdf057d02cad0c';
 // put your default Twilio Client name here
-$clientName = 'ADavidson';
+$clientName = $_GET['client'];
 // get the Twilio Client name from the page request parameters, if given
-if (isset($_REQUEST['client'])) {
-$clientName = $_REQUEST['client'];
-}
 $capability = new Services_Twilio_Capability($accountSid, $authToken);
 $capability->allowClientOutgoing($appSid);
 $capability->allowClientIncoming($clientName);
