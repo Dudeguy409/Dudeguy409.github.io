@@ -9,29 +9,35 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 </script>
 <script type="text/javascript">
  
- function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
+ //function getParameterByName(name) {
+   // name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    //var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      //  results = regex.exec(location.search);
+   // return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+//}
  
 // put your Twilio Application Sid here
-var appSid = "APc06db1e469a32bb7a0bdf057d02cad0c";
+//var appSid = "APc06db1e469a32bb7a0bdf057d02cad0c";
 // put your default Twilio Client name here
-var clientName = getParameterByName("client");
+//var clientName = getParameterByName("client");
 // put your Twilio API credentials here
-var accountSid = getParameterByName("accountSID");
-var authToken = getParameterByName("authToken");
+//var accountSid = getParameterByName("accountSID");
+//var authToken = getParameterByName("authToken");
 
-alert("your name is: "+clientName);
+//alert("your name is: "+clientName);
 
-var capability = new TwilioCapability(accountSid, authToken);
-capability.AllowClientOutgoing(appSid);
-capability.AllowClientIncoming(clientName);
-var token = capability.GenerateToken();
+//var capability = new TwilioCapability(accountSid, authToken);
+//capability.AllowClientOutgoing(appSid);
+//capability.AllowClientIncoming(clientName);
+//var token = capability.GenerateToken();
 
 </script>
+<?php
+include 'Services/Twilio/Capability.php';
+$capability = new Services_Twilio_Capability($accountSid, $authToken);
+$capability->allowClientOutgoing('APabe7650f654fc34655fc81ae71caa3ff');
+$token = $capability->generateToken();
+?>
 <link href="http://static0.twilio.com/resources/quickstart/client.css"
 type="text/css" rel="stylesheet" />
 <script type="text/javascript">
