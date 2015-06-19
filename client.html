@@ -10,24 +10,23 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 <script type="text/javascript">
 @using Twilio;
 @{
-// put your Twilio Application Sid here
-string appSid = "APzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
-// put your default Twilio Client name here
-string clientName = "ADavidson";
-// put your Twilio API credentials here
-string accountSid = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-string authToken = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
-// get the Twilio Client name from the page request parameters, if given
-if (Request["client"]!=null) {
-clientName = Request["client"];
+ 
+ function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+ 
+// put your Twilio Application Sid here
+string appSid = "APc06db1e469a32bb7a0bdf057d02cad0c";
+// put your default Twilio Client name here
+string clientName = getParameterByName("client");
+// put your Twilio API credentials here
+string accountSid = getParameterByName("accountSID");
+string authToken = getParameterByName("authToken");
 
 alert("your name is: "+clientName);
-
-if (Request["accountSID"]!=null && Request["AuthToken"]!=null ) {
-accountSid = Request["accountSID"]
-authToken = Request["AuthToken"]
-}
 
 var capability = new TwilioCapability(accountSid, authToken);
 capability.AllowClientOutgoing(appSid);
