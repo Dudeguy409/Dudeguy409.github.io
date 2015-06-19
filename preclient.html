@@ -4,15 +4,15 @@
 <title>Andrew Davidson Twilio Test</title>
 <script type="text/javascript">
    function start() {
-     string url_base = "http://dudeguy409.github.io/client.html?";
-     string text_client_label = encodeURI("client");
-        string text_client_val = encodeURI(document.getElementById("number").value);
-        string text_acc_label = encodeURI("accountSID");
-        string text_acc_val = encodeURI(document.getElementById("number2").value);
-        string text_auth_label = encodeURI("authToken");
-        string text_auth_val = encodeURI(document.getElementById("number3").value);
-        string query_string = text_client_label+"="+text_client_val+"&"+text_acc_label+"="+text_acc_val+"&"+text_auth_label+"="+text_auth_val;
-        string url = url_base + query_string;
+     var url_base = "http://dudeguy409.github.io/client.html?";
+     var text_client_label = encodeURI("client");
+        var text_client_val = encodeURI(document.getElementById("number").value);
+        var text_acc_label = encodeURI("accountSID");
+        var text_acc_val = encodeURI(document.getElementById("number2").value);
+        var text_auth_label = encodeURI("authToken");
+        var text_auth_val = encodeURI(document.getElementById("number3").value);
+        var query_string = text_client_label+"="+text_client_val+"&"+text_acc_label+"="+text_acc_val+"&"+text_auth_label+"="+text_auth_val;
+        var url = url_base + query_string;
        alert("Testing full URL");
        alert(url);
        //window.location.href = url;
