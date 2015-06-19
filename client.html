@@ -8,8 +8,6 @@ src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 </script>
 <script type="text/javascript">
-@using Twilio;
-@{
  
  function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -19,20 +17,20 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
 }
  
 // put your Twilio Application Sid here
-string appSid = "APc06db1e469a32bb7a0bdf057d02cad0c";
+var appSid = "APc06db1e469a32bb7a0bdf057d02cad0c";
 // put your default Twilio Client name here
-string clientName = getParameterByName("client");
+var clientName = getParameterByName("client");
 // put your Twilio API credentials here
-string accountSid = getParameterByName("accountSID");
-string authToken = getParameterByName("authToken");
+var accountSid = getParameterByName("accountSID");
+var authToken = getParameterByName("authToken");
 
 alert("your name is: "+clientName);
 
 var capability = new TwilioCapability(accountSid, authToken);
 capability.AllowClientOutgoing(appSid);
 capability.AllowClientIncoming(clientName);
-string token = capability.GenerateToken();
-} 
+var token = capability.GenerateToken();
+
 </script>
 <link href="http://static0.twilio.com/resources/quickstart/client.css"
 type="text/css" rel="stylesheet" />
