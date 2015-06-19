@@ -13,9 +13,7 @@
         var text_auth_val = encodeURI(document.getElementById("number3").value);
         var query_string = text_client_label+"="+text_client_val+"&"+text_acc_label+"="+text_acc_val+"&"+text_auth_label+"="+text_auth_val;
         var url = url_base + query_string;
-       alert("Testing full URL");
-       alert(url);
-       //window.location.href = url;
+       window.location.href = url;
    }
 </script>
 </head>
