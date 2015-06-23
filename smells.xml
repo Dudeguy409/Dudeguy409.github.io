@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <Say voice="woman">Hello, Bruno.  You smell very bad.  You smell like poop.  Record a message.</Say>
-<Record maxLength=15 action="/postrecord.xml" transcribe="true" />
+<Record maxLength="15" action="/postrecord.xml" transcribe="true" />
 </Response>
