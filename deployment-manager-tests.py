@@ -36,7 +36,7 @@ class TestSimpleDeployment(object):
   were deployed successfully.
   """
 
-  def call(self, command):
+  def call(self, command, deployment_name):
     """Runs the command and returns the output, possibly as an exception."""
     try:
       return subprocess.check_output(command,
@@ -44,27 +44,26 @@ class TestSimpleDeployment(object):
     except subprocess.CalledProcessError as  e:
       raise Exception(e.output)
 
-  def deploy(self, name, yaml_path):
+  def deploy(self, deployment_name, yaml_path, project_id):
     """Attempts to create and delete a deployment, raising any errors."""
-    print "Beginning deployment of " + name + "..."
-    self.call("gcloud deployment-manager deployments create " + name +
-              " --config examples/v2/" + yaml_path)
+    print "Beginning deployment of " + deployment_name + "..."
+    self.call("gcloud deployment-manager deployments create " + deployment_name +
+              " --config deploymentmanager-samples/examples/v2/" + yaml_path + " --project="+project_id, deployment_name)
     print "Deployment complete."
     raw_deployment = self.call("gcloud deployment-manager deployments describe "
-                               + name + " --format=json")
+                               + deployment_name + " --format=json" + " --project="+project_id, deployment_name)
     parsed_deployment = json.loads(raw_deployment)
     if parsed_deployment.get("deployment").get("operation").get("error"):
       raise Exception("An ERROR was found in the deployment's description.\n"
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    self.call("gcloud deployment-manager deployments delete "
-              + name + " --async -q")
+    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q" + " --project="+project_id, deployment_name)
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
-    self.deploy("build-config-vm", "build_configuration/vm.yaml")
+    self.deploy("build-config-vm", "build_configuration/vm.yaml", "andrew-davidson-test-1339")
 
   def test_build_configuration_vm_and_bigquery(self):
     self.deploy("build-config-vm-and-bigquery",
-                "build_configuration/vm_and_bigquery.yaml")
+                "build_configuration/vm_and_bigquery.yaml", "andrew-davidson-test-1339")
