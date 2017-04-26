@@ -48,7 +48,7 @@ class TestSimpleDeployment(object):
     """Attempts to create and delete a deployment, raising any errors."""
     print "Beginning deployment of " + deployment_name + "..."
     self.call("gcloud deployment-manager deployments create " + deployment_name +
-              " --config deploymentmanager-samples/examples/v2/" + yaml_path + " --project="+project_id, deployment_name)
+              " --config examples/v2/" + yaml_path + " --project="+project_id, deployment_name)
     print "Deployment complete."
     raw_deployment = self.call("gcloud deployment-manager deployments describe "
                                + deployment_name + " --format=json" + " --project="+project_id, deployment_name)
