@@ -58,7 +58,7 @@ class TestSimpleDeployment(object):
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q")
+    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async")
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
