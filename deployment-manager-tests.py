@@ -62,8 +62,8 @@ class TestSimpleDeployment(object):
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
-    self.deploy("build-config-vm", "build_configuration/vm.yaml", "andrew-davidson-test-1339")
+    self.deploy("build-config-vm", "build_configuration/vm.yaml", "andrew-davidson-test-1342")
 
   def test_build_configuration_vm_and_bigquery(self):
     self.deploy("build-config-vm-and-bigquery",
-                "build_configuration/vm_and_bigquery.yaml", "andrew-davidson-test-1339")
+                "build_configuration/vm_and_bigquery.yaml", "andrew-davidson-test-1342")
