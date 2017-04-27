@@ -48,17 +48,17 @@ class TestSimpleDeployment(object):
     """Attempts to create and delete a deployment, raising any errors."""
     print "Beginning deployment of " + deployment_name + "..."
     self.call("gcloud deployment-manager deployments create " + deployment_name +
-              " --config examples/v2/" + yaml_path)
+              " --config examples/v2/" + yaml_path + " --project="+project_id)
     print "Deployment complete."
     raw_deployment = self.call("gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json")
+                               + deployment_name + " --format=json" + " --project="+project_id)
     parsed_deployment = json.loads(raw_deployment)
     if parsed_deployment.get("deployment").get("operation").get("error"):
       raise Exception("An ERROR was found in the deployment's description.\n"
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async")
+    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async" + " --project="+project_id)
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
