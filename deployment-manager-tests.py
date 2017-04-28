@@ -25,6 +25,21 @@ nosetests -v -s deployment-manager-tests.py
 
 import json
 import subprocess
+import os
+
+def setup_module(module):
+  call("gcloud deployment-manager deployments create "+os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"]+" --config config-template.jinja --properties \"PROJECT_NAME:'"+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"]+"',ORGANIZATION_ID:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]+"\"',BILLING_ACCOUNT:'"+os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]+"',SERVICE_ACCOUNT_TO_CREATE:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]+"',SERVICE_ACCOUNT_OWNER_A:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]+"\"',SERVICE_ACCOUNT_OWNER_B:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]+"\"'\"")
+    
+def teardown_module(module):
+  call("gcloud deployment-manager deployments delete " + os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"] + " -q --async")
+    
+def call(command):
+  """Runs the command and returns the output, possibly as an exception."""
+  try:
+    return subprocess.check_output(command,
+                                   shell=True, stderr=subprocess.STDOUT)
+  except subprocess.CalledProcessError as  e:
+    raise Exception(e.output)
 
 
 class TestSimpleDeployment(object):
@@ -36,34 +51,26 @@ class TestSimpleDeployment(object):
   were deployed successfully.
   """
 
-  def call(self, command):
-    """Runs the command and returns the output, possibly as an exception."""
-    try:
-      return subprocess.check_output(command,
-                                     shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as  e:
-      raise Exception(e.output)
-
-  def deploy(self, deployment_name, yaml_path, project_id):
+  def deploy(self, deployment_name, yaml_path):
     """Attempts to create and delete a deployment, raising any errors."""
     print "Beginning deployment of " + deployment_name + "..."
-    self.call("gcloud deployment-manager deployments create " + deployment_name +
-              " --config examples/v2/" + yaml_path + " --project="+project_id)
+    call("gcloud deployment-manager deployments create " + deployment_name +
+              " --config examples/v2/" + yaml_path + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
     print "Deployment complete."
-    raw_deployment = self.call("gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json" + " --project="+project_id)
+    raw_deployment = call("gcloud deployment-manager deployments describe "
+                               + deployment_name + " --format=json" + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
     parsed_deployment = json.loads(raw_deployment)
     if parsed_deployment.get("deployment").get("operation").get("error"):
       raise Exception("An ERROR was found in the deployment's description.\n"
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    self.call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async" + " --project="+project_id)
+    call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async" + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
-    self.deploy("build-config-vm", "build_configuration/vm.yaml", "andrew-davidson-test-1342")
+    self.deploy("build-config-vm", "build_configuration/vm.yaml")
 
   def test_build_configuration_vm_and_bigquery(self):
     self.deploy("build-config-vm-and-bigquery",
-                "build_configuration/vm_and_bigquery.yaml", "andrew-davidson-test-1342")
+                "build_configuration/vm_and_bigquery.yaml")
