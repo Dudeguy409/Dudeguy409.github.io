@@ -28,7 +28,7 @@ import subprocess
 import os
 
 def setup_module(module):
-  call("gcloud deployment-manager deployments create "+os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"]+" --config config-template.jinja --properties \"PROJECT_NAME:'"+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"]+"',ORGANIZATION_ID:\""+os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]+"\",BILLING_ACCOUNT:'"+os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]+"',SERVICE_ACCOUNT_TO_CREATE:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]+"',SERVICE_ACCOUNT_OWNER_A:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]+"\"',SERVICE_ACCOUNT_OWNER_B:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]+"\"'\"")
+  call("gcloud deployment-manager deployments create "+os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"]+" --config config-template.jinja --properties \"PROJECT_NAME:'"+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"]+"',ORGANIZATION_ID:\"'"+os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]+"'\",BILLING_ACCOUNT:'"+os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]+"',SERVICE_ACCOUNT_TO_CREATE:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]+"',SERVICE_ACCOUNT_OWNER_A:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]+"\"',SERVICE_ACCOUNT_OWNER_B:'\""+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]+"\"'\"")
     
 def teardown_module(module):
   call("gcloud deployment-manager deployments delete " + os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"] + " -q --async")
