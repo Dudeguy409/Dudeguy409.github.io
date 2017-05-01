@@ -33,7 +33,6 @@ properties:
     description: >
       The ID of the organization that the projects will be under. Typically a
       base-10 string representation of integer.
-    type: string
     pattern: ^[0-9]{8,25}$
   billing-account-name:
     description: >
