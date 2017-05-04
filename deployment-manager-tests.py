@@ -35,9 +35,12 @@ def teardown_module(module):
     
 def call(command):
   """Runs the command and returns the output, possibly as an exception."""
+  print command
   try:
-    return subprocess.check_output(command,
-                                   shell=True, stderr=subprocess.STDOUT)
+    result = subprocess.check_output(command,
+                                     shell=True, stderr=subprocess.STDOUT)
+    print result
+    return result
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
 
