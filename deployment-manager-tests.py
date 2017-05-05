@@ -74,7 +74,7 @@ def call_async(command):
         print poll_result
         return poll_result
       time.sleep(1)
-      timeout++
+      timeout += 1
   except subprocess.CalledProcessError as  e:
     print "CalledProcessError: ", e
     raise Exception(e.output)
