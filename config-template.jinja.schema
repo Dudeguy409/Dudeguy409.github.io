@@ -28,7 +28,6 @@ required:
 - SERVICE_ACCOUNT_OWNER_A
 - SERVICE_ACCOUNT_OWNER_B
 - SERVICE_ACCOUNT_OWNER_C
-- SERVICE_ACCOUNT_OWNER_D
 
 properties:
   ORGANIZATION_ID:
@@ -56,9 +55,5 @@ properties:
     description: TODO
     
   SERVICE_ACCOUNT_OWNER_C:
-    type: string
-    description: TODO
-    
-  SERVICE_ACCOUNT_OWNER_D:
     type: string
     description: TODO
