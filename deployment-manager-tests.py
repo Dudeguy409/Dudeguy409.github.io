@@ -58,12 +58,23 @@ def call_async(command):
     operation_name = (parsed_result[0])["name"]
   else:
     operation_name = parsed_result["name"]
-  poll_command = "gcloud deployment-manager operations wait " + operation_name
+  poll_command = "gcloud deployment-manager operations describe " + operation_name
   try:
-    poll_result = subprocess.check_output(poll_command,
+    timeout=0
+    while timeout<90:
+      poll_result = subprocess.check_output(poll_command,
                                      shell=True, stderr=subprocess.STDOUT)
-    print poll_result
-    return poll_result
+      print poll_result
+      parsed_poll_result = json.loads(poll_result)
+      if parsed_poll_result.get("status")=="DONE":
+        poll_error = parsed_poll_result.get("error")
+        if poll_error:
+          print poll_error
+          raise Exception(json.dumps(poll_error))
+        print poll_result
+        return poll_result
+      time.sleep(1)
+      timeout++
   except subprocess.CalledProcessError as  e:
     print "CalledProcessError: ", e
     raise Exception(e.output)
