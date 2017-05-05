@@ -64,18 +64,16 @@ def call_async(command):
     while timeout<90:
       poll_popen = subprocess.Popen( poll_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       poll_output, poll_error = poll_popen.communicate()
-      print "poll error:", poll_error
       if poll_popen.returncode != 0:
         raise Exception(poll_error)
-      print "poll output: ", poll_output
       parsed_poll_result = json.loads(poll_output)
       if parsed_poll_result.get("status")=="DONE":
         poll_result_error = parsed_poll_result.get("error")
         if poll_result_error:
           print "poll result error: ", poll_result_error
           raise Exception(json.dumps(poll_result_error))
-        print "poll result: ", poll_result
-        return poll_result
+        print "poll result: ", poll_output
+        return poll_output
       time.sleep(1)
       timeout += 1
   except subprocess.CalledProcessError as  e:
