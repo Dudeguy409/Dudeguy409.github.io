@@ -39,5 +39,4 @@ resources:
       - role: roles/owner
         members:
         # Make sure to include the DM service account that is doing the deployment!
-        - {{ properties["SERVICE_ACCOUNT_OWNER_A"] }}
         - {{ properties["SERVICE_ACCOUNT_OWNER_B"] }}
