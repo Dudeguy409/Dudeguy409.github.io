@@ -20,22 +20,57 @@ in the uderlying APIs that the examples use.  This program can be run locally on
 your machine as long as your cloud SDK has been installed and configured, and
 have the nose python testing framework installed.  To run this test from the
 command line, try:
-nosetests -v -s deployment-manager-tests.py
+nosetests -v deployment-manager-tests.py
 """
 
 import json
-import subprocess
 import os
+import subprocess
+import time
+
+deployment_name = os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"]
+project_to_create = os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"]
+organization = os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]
+service_account_a = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]
+service_account_b = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]
+billing_account = os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]
+account_to_create = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]
 
 def setup_module(module):
-  call("gcloud deployment-manager deployments create "+os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"]+" --config config-template.jinja --properties \"PROJECT_NAME:'"+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"]+"',ORGANIZATION_ID:'"+os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]+"',BILLING_ACCOUNT:'"+os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]+"',SERVICE_ACCOUNT_TO_CREATE:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]+"',SERVICE_ACCOUNT_OWNER_A:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]+"',SERVICE_ACCOUNT_OWNER_B:'"+os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]+"'\"")
-
+  call_async("gcloud deployment-manager deployments create "+deployment_name+" --async --format=json --config config-template.jinja --properties \"PROJECT_NAME:'"+project_to_create+"',ORGANIZATION_ID:'"+organization+"',BILLING_ACCOUNT:'"+billing_account+"',SERVICE_ACCOUNT_TO_CREATE:'"+account_to_create+"',SERVICE_ACCOUNT_OWNER_A:'"+service_account_a+"',SERVICE_ACCOUNT_OWNER_B:'"+service_account_b+"'\"")
+  
 def teardown_module(module):
-  call("gcloud deployment-manager deployments delete " + os.environ["DEPLOYMENT_MANAGER_TEST_DEPLOYMENT_NAME"] + " -q --async")
-    
+  call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json")
+
+def call_async(command):
+  """Runs the command and returns the output, possibly as an exception."""
+  print "Running command: ", command
+
+  popen = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  output,error = popen.communicate()
+  print "error:", error
+  if popen.returncode != 0:
+    raise Exception(error)
+  print "output: ", output
+  parsed_result = json.loads(output)
+  operation_name = ""
+  if isinstance(parsed_result, list):
+    operation_name = (parsed_result[0])["name"]
+  else:
+    operation_name = parsed_result["name"]
+  poll_command = "gcloud deployment-manager operations wait " + operation_name
+  try:
+    poll_result = subprocess.check_output(poll_command,
+                                     shell=True, stderr=subprocess.STDOUT)
+    print poll_result
+    return poll_result
+  except subprocess.CalledProcessError as  e:
+    print "CalledProcessError: ", e
+    raise Exception(e.output)
+
 def call(command):
   """Runs the command and returns the output, possibly as an exception."""
-  print command
+  print "Running command: ", command
   try:
     result = subprocess.check_output(command,
                                      shell=True, stderr=subprocess.STDOUT)
@@ -43,6 +78,7 @@ def call(command):
     return result
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
+
 
 
 class TestSimpleDeployment(object):
@@ -57,18 +93,18 @@ class TestSimpleDeployment(object):
   def deploy(self, deployment_name, yaml_path):
     """Attempts to create and delete a deployment, raising any errors."""
     print "Beginning deployment of " + deployment_name + "..."
-    call("gcloud deployment-manager deployments create " + deployment_name +
-              " --config examples/v2/" + yaml_path + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
+    call_async("gcloud deployment-manager deployments create " + deployment_name +
+              " --format=json --async --config examples/v2/" + yaml_path + " --project="+project_to_create)
     print "Deployment complete."
     raw_deployment = call("gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json" + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
+                               + deployment_name + " --format=json" + " --project="+project_to_create)
     parsed_deployment = json.loads(raw_deployment)
     if parsed_deployment.get("deployment").get("operation").get("error"):
       raise Exception("An ERROR was found in the deployment's description.\n"
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    call("gcloud deployment-manager deployments delete " + deployment_name + " -q --async" + " --project="+os.environ["DEPLOYMENT_MANAGER_TEST_PROJECT_NAME"])
+    call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json --project="+project_to_create)
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
