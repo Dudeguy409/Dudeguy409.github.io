@@ -34,7 +34,6 @@ organization = os.environ["DEPLOYMENT_MANAGER_TEST_ORGANIZATION_ID"]
 service_account_a = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_A"]
 service_account_b = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_B"]
 service_account_c = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_C"]
-service_account_d = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_OWNER_D"]
 billing_account = os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]
 account_to_create = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]
 
