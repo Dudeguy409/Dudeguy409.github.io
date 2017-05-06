@@ -60,6 +60,7 @@ def call_async(command):
   else:
     operation_name = parsed_result["name"]
   poll_command = "gcloud deployment-manager operations describe " + operation_name+" --format=json"
+  print "poll command: ", poll_command
   try:
     timeout=0
     while timeout<90:
