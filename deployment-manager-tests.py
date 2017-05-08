@@ -38,13 +38,15 @@ billing_account = os.environ["DEPLOYMENT_MANAGER_TEST_BILLING_ACCOUNT"]
 account_to_create = os.environ["DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_CREATE"]
 
 def setup_module(module):
-  call_async("gcloud deployment-manager deployments create "+deployment_name+" --async --format=json --config config-template.jinja --properties \"PROJECT_NAME:'"+project_to_create+"',ORGANIZATION_ID:'"+organization+"',BILLING_ACCOUNT:'"+billing_account+"',SERVICE_ACCOUNT_TO_CREATE:'"+account_to_create+"',SERVICE_ACCOUNT_OWNER_A:'"+service_account_a+"',SERVICE_ACCOUNT_OWNER_B:'"+service_account_b+"',SERVICE_ACCOUNT_OWNER_C:'"+service_account_c+"'\"")
+  call_async("gcloud deployment-manager deployments create "+deployment_name+" --async --format=json --config config-template.jinja --properties \"PROJECT_NAME:'"+project_to_create+"',ORGANIZATION_ID:'"+organization+"',BILLING_ACCOUNT:'"+billing_account+"',SERVICE_ACCOUNT_TO_CREATE:'"+account_to_create+"',SERVICE_ACCOUNT_OWNER_A:'"+service_account_a+"',SERVICE_ACCOUNT_OWNER_B:'"+service_account_b+"',SERVICE_ACCOUNT_OWNER_C:'"+service_account_c+"'\"", False)
   
 def teardown_module(module):
-  call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json")
+  call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json", False)
 
-def call_async(command):
+def call_async(command, is_in_created_project):
   """Runs the command and returns the output, possibly as an exception."""
+  if is_in_created_project:
+    command+=" --project="+project_to_create 
   print "Running command: ", command
 
   popen = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -59,7 +61,9 @@ def call_async(command):
     operation_name = (parsed_result[0])["name"]
   else:
     operation_name = parsed_result["name"]
-  poll_command = "gcloud deployment-manager operations describe " + operation_name+" --format=json --project="+project_to_create
+  poll_command = "gcloud deployment-manager operations describe " + operation_name+" --format=json"
+  if is_in_created_project:
+    poll_command+=" --project="+project_to_create
   print "poll command: ", poll_command
   try:
     timeout=0
@@ -82,7 +86,7 @@ def call_async(command):
     print "CalledProcessError: ", e
     raise Exception(e.output)
 
-def call(command):
+def call_sync(command):
   """Runs the command and returns the output, possibly as an exception."""
   print "Running command: ", command
   try:
@@ -108,9 +112,9 @@ class TestSimpleDeployment(object):
     """Attempts to create and delete a deployment, raising any errors."""
     print "Beginning deployment of " + deployment_name + "..."
     call_async("gcloud deployment-manager deployments create " + deployment_name +
-              " --format=json --async --config examples/v2/" + yaml_path + " --project="+project_to_create)
+              " --format=json --async --config examples/v2/" + yaml_path, True)
     print "Deployment complete."
-    raw_deployment = call("gcloud deployment-manager deployments describe "
+    raw_deployment = call_sync("gcloud deployment-manager deployments describe "
                                + deployment_name + " --format=json" + " --project="+project_to_create)
     parsed_deployment = json.loads(raw_deployment)
     if parsed_deployment.get("deployment").get("operation").get("error"):
@@ -118,7 +122,7 @@ class TestSimpleDeployment(object):
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
     print "Queueing deployment for deletion..."
-    call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json --project="+project_to_create)
+    call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json", True)
     print "Deployment queued for deletion."
 
   def test_build_configuration_vm(self):
