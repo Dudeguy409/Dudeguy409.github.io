@@ -49,13 +49,13 @@ def teardown_module(module):
 def call(command):
   """Runs the command and returns the output, possibly as an exception."""
   print "Running command: ", command
-  try:
-    result = subprocess.check_output(command,
-                                     shell=True, stderr=subprocess.STDOUT)
-    print result
-    return result
-  except subprocess.CalledProcessError as  e:
-    raise Exception(e.output)
+  popen = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  output,error = popen.communicate()
+  print "error:", error
+  if popen.returncode != 0:
+    raise Exception(error)
+  print "output: ", output
+  return output
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
