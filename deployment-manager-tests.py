@@ -40,57 +40,13 @@ create_new_project = os.environ.get("DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT"
 
 def setup_module(module):
   if create_new_project:
-    call_async("gcloud deployment-manager deployments create "+deployment_name+" --async --format=json --config config-template.jinja --properties \"PROJECT_NAME:'"+project_to_create+"',ORGANIZATION_ID:'"+organization+"',BILLING_ACCOUNT:'"+billing_account+"',SERVICE_ACCOUNT_TO_CREATE:'"+account_to_create+"',SERVICE_ACCOUNT_OWNER_A:'"+service_account_a+"',SERVICE_ACCOUNT_OWNER_B:'"+service_account_b+"',SERVICE_ACCOUNT_OWNER_C:'"+service_account_c+"'\"", False)
-    time.sleep(200)
+    call("gcloud deployment-manager deployments create "+deployment_name+" --config config-template.jinja --properties \"PROJECT_NAME:'"+project_to_create+"',ORGANIZATION_ID:'"+organization+"',BILLING_ACCOUNT:'"+billing_account+"',SERVICE_ACCOUNT_TO_CREATE:'"+account_to_create+"',SERVICE_ACCOUNT_OWNER_A:'"+service_account_a+"',SERVICE_ACCOUNT_OWNER_B:'"+service_account_b+"',SERVICE_ACCOUNT_OWNER_C:'"+service_account_c+"'\"")
 
 def teardown_module(module):
   if create_new_project:
-    call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json", False)
+    call("gcloud deployment-manager deployments delete " + deployment_name + " -q")
 
-def call_async(command, is_in_created_project):
-  """Runs the command and returns the output, possibly as an exception."""
-  if is_in_created_project:
-    command+=" --project="+project_to_create 
-  print "Running command: ", command
-
-  popen = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  output,error = popen.communicate()
-  print "error:", error
-  if popen.returncode != 0:
-    raise Exception(error)
-  print "output: ", output
-  parsed_result = json.loads(output)
-  operation_name = ""
-  if isinstance(parsed_result, list):
-    operation_name = (parsed_result[0])["name"]
-  else:
-    operation_name = parsed_result["name"]
-  poll_command = "gcloud deployment-manager operations describe " + operation_name+" --format=json"
-  if is_in_created_project:
-    poll_command+=" --project="+project_to_create
-  print "poll command: ", poll_command
-  try:
-    timeout=0
-    while timeout<90:
-      time.sleep(1)
-      poll_popen = subprocess.Popen( poll_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      poll_output, poll_error = poll_popen.communicate()
-      if poll_popen.returncode != 0:
-        raise Exception(poll_error)
-      parsed_poll_result = json.loads(poll_output)
-      if parsed_poll_result.get("status")=="DONE":
-        poll_result_error = parsed_poll_result.get("error")
-        if poll_result_error:
-          print "poll result error: ", poll_result_error
-          raise Exception(json.dumps(poll_result_error))
-        print "poll result: ", poll_output
-        return poll_output
-      timeout += 1
-  except subprocess.CalledProcessError as  e:
-    print "CalledProcessError: ", e
-    raise Exception(e.output)
-
-def call_sync(command):
+def call(command):
   """Runs the command and returns the output, possibly as an exception."""
   print "Running command: ", command
   try:
@@ -100,8 +56,6 @@ def call_sync(command):
     return result
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
-
-
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
@@ -114,35 +68,28 @@ class TestSimpleDeployment(object):
 
   def deploy(self, deployment_name, yaml_path):
     """Attempts to create and delete a deployment, raising any errors."""
-    print "Beginning deployment of " + deployment_name + "..."
+    deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name +
+              " --config examples/v2/" + yaml_path
+    deployment_describe_command = "gcloud deployment-manager deployments describe "
+                               + deployment_name + " --format=json"
+    deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q"
     if create_new_project:
-      call_async("gcloud deployment-manager deployments create " + deployment_name +
-              " --format=json --async --config examples/v2/" + yaml_path, True)
-      print "Deployment complete."
-      raw_deployment = call_sync("gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json" + " --project="+project_to_create)
-      parsed_deployment = json.loads(raw_deployment)
-      if parsed_deployment.get("deployment").get("operation").get("error"):
-        raise Exception("An ERROR was found in the deployment's description.\n"
+      deployment_create_command += " --project=" + project_to_create
+      deployment_describe_command += " --project=" + project_to_create
+      deployment_delete_command += " --project=" + project_to_create
+
+    print "Beginning deployment of " + deployment_name + "..."  
+    call(deployment_create_command)
+    print "Deployment complete."
+    raw_deployment = call(deployment_describe_command)
+    parsed_deployment = json.loads(raw_deployment)
+    if parsed_deployment.get("deployment").get("operation").get("error"):
+      raise Exception("An ERROR was found in the deployment's description.\n"
                       "---BEGIN DESCRIPTION---\n"
                       + raw_deployment + "---END DESCRIPTION---")
-      print "Queueing deployment for deletion..."
-      call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json", True)
-      print "Deployment queued for deletion."
-    else:
-      call_async("gcloud deployment-manager deployments create " + deployment_name +
-              " --format=json --async --config examples/v2/" + yaml_path, False)
-      print "Deployment complete."
-      raw_deployment = call_sync("gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json")
-      parsed_deployment = json.loads(raw_deployment)
-      if parsed_deployment.get("deployment").get("operation").get("error"):
-        raise Exception("An ERROR was found in the deployment's description.\n"
-                      "---BEGIN DESCRIPTION---\n"
-                      + raw_deployment + "---END DESCRIPTION---")
-      print "Queueing deployment for deletion..."
-      call_async("gcloud deployment-manager deployments delete " + deployment_name + " -q --async --format=json", False)
-      print "Deployment queued for deletion."
+    print "Deleting deployment..."
+    call(deployment_delete_command)
+    print "Deployment deleted."
 
   def test_build_configuration_vm(self):
     self.deploy("build-config-vm", "build_configuration/vm.yaml")
