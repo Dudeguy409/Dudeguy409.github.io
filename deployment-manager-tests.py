@@ -68,10 +68,8 @@ class TestSimpleDeployment(object):
 
   def deploy(self, deployment_name, yaml_path):
     """Attempts to create and delete a deployment, raising any errors."""
-    deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name +
-              " --config examples/v2/" + yaml_path
-    deployment_describe_command = "gcloud deployment-manager deployments describe "
-                               + deployment_name + " --format=json"
+    deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path
+    deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json"
     deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q"
     if create_new_project:
       deployment_create_command += " --project=" + project_to_create
