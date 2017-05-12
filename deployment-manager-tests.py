@@ -114,11 +114,11 @@ class TestSimpleDeployment(object):
 
   
   def test_ssl(self):
-    self.deploy("ssl", "ssl.ssl.yaml")
+    self.deploy("ssl", "ssl/ssl.yaml")
     
   def test_vm_startup_script(self):
     # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
-    # TODO create an SSH tunnel to connect 
+    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
     # TODO test both versions
     pass
   
@@ -143,16 +143,32 @@ class TestSimpleDeployment(object):
     self.deploy("step_by_step_6_jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/two-vms.yaml")
     
   def test_step_by_step_7(self):
-    self.deploy("step_by_step_7", "step_by_step_guide/step4_use_references/two-vms.yaml")
+    self.deploy("step_by_step_7_python", "step_by_step_guide/step7_use_environment_variables/python/two-vms.yaml")
+    self.deploy("step_by_step_7_jinja", "step_by_step_guide/step7_use_environment_variables/jinja/two-vms.yaml")
     
-  def test_step_by_step_8(self):
-    self.deploy("step_by_step_8", "step_by_step_guide/step4_use_references/two-vms.yaml")
+  def test_step_by_step_8_9(self):
+    # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
+   
+    self.create("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/two-vms.yaml")
+    self.create("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/two-vms.yaml")
     
-  def test_step_by_step_9(self):
-    self.deploy("step_by_step_9", "step_by_step_guide/step4_use_references/two-vms.yaml")
+     # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
+     
+    self.update("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/two-vms.yaml")
+    self.update("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/two-vms.yaml")
+    
+    #TODO reset the vms: gcloud compute instances reset the-first-vm
+    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP"", and check the contents
+    #TODO delete
     
   def test_step_by_step_10(self):
-    self.deploy("step_by_step_10", "step_by_step_guide/step4_use_references/two-vms.yaml")
+    self.create("step_by_step_10_python", "step_by_step_guide/step10_use_python_templates/python/two-vms.yaml")
+    self.create("step_by_step_10_jinja", "step_by_step_guide/step10_use_python_templates/jinja/two-vms.yaml")
+    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
+    
+    
+  def test_quick_start(self):
+    self.deploy("quick_start", "quick_start/vm.yaml")
   """
   
   
