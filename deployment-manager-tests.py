@@ -88,6 +88,13 @@ def delete(deployment_name)
 def deploy(deployment_name, yaml_path):
   create(deployment_name, yaml_path)
   delete(deployment_name)
+  
+def deploy_http_server(deployment_name, yaml_path):
+  # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
+  create(deployment_name, yaml_path)
+  rslt = call("gcloud compute instances describe the-first-vm | grep \"natIP\"")
+  raise Exception(rslt)
+  delete(deployment_name)
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
@@ -114,10 +121,8 @@ class TestSimpleDeployment(object):
     deploy("waiter", "waiter/config.yaml")
   
   def test_vm_startup_script(self):
-    # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
-    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
-    # TODO test both versions
-    pass
+    deploy_http_server("vm_startup_script_python", "vm_startup_script/python/vm.yaml")
+    deploy_http_server("vm_startup_script_jinja", "vm_startup_script/jinja/vm.yaml")
   
   def test_quick_start(self):
     deploy("quick_start", "quick_start/vm.yaml")
