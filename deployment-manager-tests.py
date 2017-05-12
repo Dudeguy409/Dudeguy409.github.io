@@ -65,7 +65,7 @@ def call(command):
     raise Exception(e.output)
     
 def create(deployment_name, yaml_path):
-"""Attempts to create and delete a deployment, raising any errors."""
+  """Attempts to create a deployment, raising any errors."""
   deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
   deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json --project=" + project_name
   print "Beginning deployment of " + deployment_name + "..."  
@@ -79,13 +79,13 @@ def create(deployment_name, yaml_path):
                     + raw_deployment + "---END DESCRIPTION---")
     
 def delete(deployment_name):
-"""Attempts to create and delete a deployment, raising any errors."""
   deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q --project="+ project_name
   print "Deleting deployment..."
   call(deployment_delete_command)
   print "Deployment deleted."
 
 def deploy(deployment_name, yaml_path):
+  """Attempts to create and delete a deployment, raising any errors."""
   create(deployment_name, yaml_path)
   delete(deployment_name)
   
