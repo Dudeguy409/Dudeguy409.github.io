@@ -17,10 +17,15 @@ This is a nose test program that checks that all of the GitHub examples for the
 Google Cloud Platform's Deployment Manager are being deployed correctly.  These
 tests should detect breaking changes in the example code and breaking changes
 in the uderlying APIs that the examples use.  This program can be run locally on
-your machine as long as your cloud SDK has been installed and configured, and
-have the nose python testing framework installed.  To run this test from the
+your machine as long as your Google Cloud SDK has been installed and configured, and
+you have installed the nose python testing framework.  To run this test from the
 command line, try:
 nosetests -v deployment-manager-tests.py
+
+In order to create a temporary project in which to create and delete these test deployments, follow the instrictions in the project creation github example:
+https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
+
+Then, before running the tests, set the environment variables for your specific project.  If "DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT" is set to "TRUE", the tests will be run in a new project.  If not, they will be run in your default configured project. 
 """
 
 import json
@@ -95,3 +100,11 @@ class TestSimpleDeployment(object):
   def test_build_configuration_vm_and_bigquery(self):
     self.deploy("build-config-vm-and-bigquery",
                 "build_configuration/vm_and_bigquery.yaml")
+    
+  """  
+  def test_waiter(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/waiter/config.yaml")
+    self.deploy("waiter",
+                "waiter/config.yaml")
+  """
