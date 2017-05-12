@@ -63,6 +63,31 @@ def call(command):
     return result
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
+    
+def create(deployment_name, yaml_path)
+"""Attempts to create and delete a deployment, raising any errors."""
+  deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
+  deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json --project=" + project_name
+  print "Beginning deployment of " + deployment_name + "..."  
+  call(deployment_create_command)
+  print "Deployment complete."
+  raw_deployment = call(deployment_describe_command)
+  parsed_deployment = json.loads(raw_deployment)
+  if parsed_deployment.get("deployment").get("operation").get("error"):
+    raise Exception("An ERROR was found in the deployment's description.\n"
+                    "---BEGIN DESCRIPTION---\n"
+                    + raw_deployment + "---END DESCRIPTION---")
+    
+def delete(deployment_name)
+"""Attempts to create and delete a deployment, raising any errors."""
+  deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q --project="+ project_name
+  print "Deleting deployment..."
+  call(deployment_delete_command)
+  print "Deployment deleted."
+
+def deploy(deployment_name, yaml_path):
+  create(deployment_name, yaml_path)
+  delete(deployment_name)
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
@@ -72,47 +97,21 @@ class TestSimpleDeployment(object):
   need to be interacted with after being deployed in order to ensure that they
   were deployed successfully.
   """
-  def create()
-  
-  def delete()
-  
-  def deploy(self, deployment_name, yaml_path):
-    """Attempts to create and delete a deployment, raising any errors."""
-    deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path
-    deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json"
-    deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q"
-    if create_new_project:
-      deployment_create_command += " --project=" + project_to_create
-      deployment_describe_command += " --project=" + project_to_create
-      deployment_delete_command += " --project=" + project_to_create
-
-    print "Beginning deployment of " + deployment_name + "..."  
-    call(deployment_create_command)
-    print "Deployment complete."
-    raw_deployment = call(deployment_describe_command)
-    parsed_deployment = json.loads(raw_deployment)
-    if parsed_deployment.get("deployment").get("operation").get("error"):
-      raise Exception("An ERROR was found in the deployment's description.\n"
-                      "---BEGIN DESCRIPTION---\n"
-                      + raw_deployment + "---END DESCRIPTION---")
-    print "Deleting deployment..."
-    call(deployment_delete_command)
-    print "Deployment deleted."
 
   def test_build_configuration_vm(self):
-    self.deploy("build-config-vm", "build_configuration/vm.yaml")
+    deploy("build-config-vm", "build_configuration/vm.yaml")
 
   def test_build_configuration_vm_and_bigquery(self):
-    self.deploy("build-config-vm-and-bigquery",
+    deploy("build-config-vm-and-bigquery",
                 "build_configuration/vm_and_bigquery.yaml")
     
   def test_ssl(self):
-    self.deploy("ssl", "ssl/ssl.yaml")
+    deploy("ssl", "ssl/ssl.yaml")
       
   def test_waiter(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
     call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/waiter/config.yaml")
-    self.deploy("waiter", "waiter/config.yaml")
+    deploy("waiter", "waiter/config.yaml")
   
   def test_vm_startup_script(self):
     # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
@@ -121,7 +120,7 @@ class TestSimpleDeployment(object):
     pass
   
   def test_quick_start(self):
-    self.deploy("quick_start", "quick_start/vm.yaml")
+    deploy("quick_start", "quick_start/vm.yaml")
   
   """
   def test_vpn_auto_subnet(self):
@@ -130,22 +129,22 @@ class TestSimpleDeployment(object):
     "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
   
   def test_step_by_step_2(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
     self.deploy("step_by_step_2", "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
   
   def test_step_by_step_4(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step4_use_references/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step4_use_references/two-vms.yaml")
     self.deploy("step_by_step_4", "step_by_step_guide/step4_use_references/two-vms.yaml")
   
   def test_step_by_step_5(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
     self.deploy("step_by_step_5_python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
     self.deploy("step_by_step_5_jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     
   def test_step_by_step_6(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_to_create + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
     self.deploy("step_by_step_6_python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
     self.deploy("step_by_step_6_jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     
