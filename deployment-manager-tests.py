@@ -105,6 +105,26 @@ class TestSimpleDeployment(object):
   def test_waiter(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
     call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/waiter/config.yaml")
-    self.deploy("waiter",
-                "waiter/config.yaml")
+    self.deploy("waiter", "waiter/config.yaml")
+  
+  def test_vpn_auto_subnet(self):
+    # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
+    # TODO figure out what values to use for the parameters
+    "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
+
+  
+  def test_ssl(self):
+    self.deploy("ssl", "ssl.ssl.yaml")
+    
+  def test_vm_startup_script(self):
+    # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
+    # TODO create an SSH tunnel to connect 
+    # TODO test both versions
+    pass
+  
+  def test_step_by_step_2(self):
   """
+  
+  
+  
+  
