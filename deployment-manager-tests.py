@@ -99,7 +99,7 @@ def parse_ips(deployment_name):
     if resource["type"]=="compute.v1.instance":
       instance_name_list.append(resource["name"])
   for name in instance_name_list:
-    ip_map[name]=(call("gcloud compute instances describe "+name+" --zone=" + zone + " | grep \"networkIP\""))
+    ip_map[name]=(call("gcloud compute instances describe "+name+" --zone=" + zone + " | grep \"networkIP\" | sed 's/networkIP: //'"))
   return ip_map
   
 def deploy_http_server(deployment_name, yaml_path):
