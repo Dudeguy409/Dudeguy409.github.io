@@ -92,21 +92,28 @@ def deploy(deployment_name, yaml_path):
 
 def parse_ips(deployment_name):
   instance_name_list=[]
-  ip_list = []
+  ip_map = {}
   raw_resources=call("gcloud deployment-manager resources list --deployment " + deployment_name + " --format=json")
   parsed_resources =json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"]=="compute.v1.instance":
       instance_name_list.append(resource["name"])
   for name in instance_name_list:
-    ip_list.append(call("gcloud compute instances describe "+name+" --zone=" + zone + " | grep \"natIP\""))
-  return ip_list
+    ip_map[name]=(call("gcloud compute instances describe "+name+" --zone=" + zone + " | grep \"networkIP\""))
+  return ip_map
   
 def deploy_http_server(deployment_name, yaml_path):
-  # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
+  # TODO create an SSH tunnel to connect to instance, then curl
   create(deployment_name, yaml_path)
-  parse_ips(deployment_name)
-  delete(deployment_name)
+  parsed_instances = parse_ips(deployment_name)
+  port=8888
+  for instance_name, ip in parsed_instances.iteritems():
+    call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+port+":"+ip+":80")
+    rslt = call("curl http://localhost:"+port)
+    raise Exception(rslt)
+    port += 1
+  
+  #delete(deployment_name)
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
