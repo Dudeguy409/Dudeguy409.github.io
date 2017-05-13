@@ -121,6 +121,9 @@ class TestSimpleDeployment(object):
     deploy("waiter", "waiter/config.yaml")
   
   def test_vm_startup_script(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/vm_startup_script/python/vm.yaml")
+    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/vm_startup_script/jinja/vm.yaml")
     deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
     deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
   
