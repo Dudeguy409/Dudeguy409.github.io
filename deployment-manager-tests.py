@@ -126,7 +126,7 @@ class TestSimpleDeployment(object):
   
   def test_quick_start(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/quick_start/vm.yaml")
-    call("sed -i.backup 's/\[MY_PROJECT\]/debian-8/' examples/v2/quick_start/vm.yaml")
+    call("sed -i.backup 's/\[FAMILY_NAME\]/debian-8/' examples/v2/quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
   
   """
