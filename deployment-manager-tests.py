@@ -121,8 +121,8 @@ class TestSimpleDeployment(object):
     deploy("waiter", "waiter/config.yaml")
   
   def test_vm_startup_script(self):
-    deploy_http_server("vm_startup_script_python", "vm_startup_script/python/vm.yaml")
-    deploy_http_server("vm_startup_script_jinja", "vm_startup_script/jinja/vm.yaml")
+    deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
+    deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
   
   def test_quick_start(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/quick_start/vm.yaml")
