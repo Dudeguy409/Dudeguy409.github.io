@@ -43,6 +43,7 @@ account_to_create = os.environ.get("DEPLOYMENT_MANAGER_TEST_SERVICE_ACCOUNT_TO_C
 host_project = os.environ.get("DEPLOYMENT_MANAGER_TEST_HOST_PROJECT")
 create_new_project = os.environ.get("DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT")=="TRUE"
 project_name = project_to_create if create_new_project else host_project
+zone="us-west1-b"
   
 
 def setup_module(module):
@@ -98,7 +99,7 @@ def parse_ips(deployment_name):
     if resource["type"]=="compute.v1.instance":
       instance_name_list.append(resource["name"])
   for name in instance_name_list:
-    ip_list.append(call("gcloud compute instances describe "+name+" | grep \"natIP\""))
+    ip_list.append(call("gcloud compute instances describe "+name+" --zone=" + zone + " | grep \"natIP\""))
   return ip_list
   
 def deploy_http_server(deployment_name, yaml_path):
@@ -128,13 +129,13 @@ class TestSimpleDeployment(object):
       
   def test_waiter(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/waiter/config.yaml")
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/waiter/config.yaml")
     deploy("waiter", "waiter/config.yaml")
   
   def test_vm_startup_script(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/vm_startup_script/python/vm.yaml")
-    call("sed -i.backup 's/ZONE_TO_RUN/us-west1-b/' examples/v2/vm_startup_script/jinja/vm.yaml")
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/python/vm.yaml")
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
     deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
     deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
   
