@@ -103,7 +103,6 @@ def parse_ips(deployment_name):
   return ip_map
   
 def deploy_http_server(deployment_name, yaml_path):
-  # TODO create an SSH tunnel to connect to instance, then curl
   create(deployment_name, yaml_path)
   parsed_instances = parse_ips(deployment_name)
   port=8888
