@@ -96,9 +96,9 @@ def parse_ips(deployment_name):
   parsed_resources =json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"]=="compute.v1.instance":
-      instance_name_list += resource["name"]
+      instance_name_list.append(resource["name"])
   for name in instance_name_list:
-    ip_list += call("gcloud compute instances describe "+name+" | grep \"natIP\"")
+    ip_list.append(call("gcloud compute instances describe "+name+" | grep \"natIP\""))
   return ip_list
   
 def deploy_http_server(deployment_name, yaml_path):
