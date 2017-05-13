@@ -88,12 +88,23 @@ def deploy(deployment_name, yaml_path):
   """Attempts to create and delete a deployment, raising any errors."""
   create(deployment_name, yaml_path)
   delete(deployment_name)
+
+def parse_ips(deployment_name):
+  instance_name_list=[]
+  ip_list = []
+  raw_resources=call("gcloud deployment-manager resources list --deployment " + deployment_name + " --format=json")
+  parsed_resources =json.loads(raw_resources)
+  for resource in parsed_resources:
+    if resource["type"]=="compute.v1.instance":
+      instance_name_list += resource["name"]
+  for name in instance_name_list:
+    ip_list += call("gcloud compute instances describe "+name+" | grep \"natIP\"")
+  return ip_list
   
 def deploy_http_server(deployment_name, yaml_path):
   # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
   create(deployment_name, yaml_path)
-  rslt = call("gcloud compute instances describe the-first-vm | grep \"natIP\"")
-  raise Exception(rslt)
+  parse_ips(deployment_name)
   delete(deployment_name)
 
 class TestSimpleDeployment(object):
