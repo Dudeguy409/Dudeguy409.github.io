@@ -125,7 +125,8 @@ class TestSimpleDeployment(object):
     deploy_http_server("vm_startup_script_jinja", "vm_startup_script/jinja/vm.yaml")
   
   def test_quick_start(self):
-    deploy("quick_start", "quick_start/vm.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    deploy("quick-start", "quick_start/vm.yaml")
   
   """
   def test_vpn_auto_subnet(self):
