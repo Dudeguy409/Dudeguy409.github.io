@@ -125,7 +125,7 @@ class TestSimpleDeployment(object):
     deploy_http_server("vm_startup_script_jinja", "vm_startup_script/jinja/vm.yaml")
   
   def test_quick_start(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
   
   """
