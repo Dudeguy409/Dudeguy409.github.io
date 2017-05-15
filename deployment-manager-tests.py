@@ -65,13 +65,15 @@ def call(command):
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
     
-def create(deployment_name, yaml_path):
+def create_deployment(deployment_name, yaml_path):
   """Attempts to create a deployment, raising any errors."""
   deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
-  deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json --project=" + project_name
   print "Beginning deployment of " + deployment_name + "..."  
   call(deployment_create_command)
   print "Deployment complete."
+
+def check_deployment(deployment_name):
+  deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json --project=" + project_name
   raw_deployment = call(deployment_describe_command)
   parsed_deployment = json.loads(raw_deployment)
   if parsed_deployment.get("deployment").get("operation").get("error"):
@@ -79,11 +81,18 @@ def create(deployment_name, yaml_path):
                     "---BEGIN DESCRIPTION---\n"
                     + raw_deployment + "---END DESCRIPTION---")
     
-def delete(deployment_name):
+def delete_deployment(deployment_name):
   deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q --project="+ project_name
   print "Deleting deployment..."
   call(deployment_delete_command)
   print "Deployment deleted."
+  
+def update_deployment(deployment_name, yaml_path):
+  """Attempts to create a deployment, raising any errors."""
+  deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
+  print "Beginning deployment of " + deployment_name + "..."  
+  call(deployment_create_command)
+  print "Deployment complete."  
 
 def deploy(deployment_name, yaml_path):
   """Attempts to create and delete a deployment, raising any errors."""
@@ -105,14 +114,17 @@ def parse_ips(deployment_name):
 def deploy_http_server(deployment_name, yaml_path):
   create(deployment_name, yaml_path)
   parsed_instances = parse_ips(deployment_name)
+  #TODO maybe get rid of port if possible
   port=8888
   for instance_name, ip in parsed_instances.iteritems():
-    call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port)+":"+str(ip)+":80")
-    rslt = call("curl http://localhost:"+str(port))
+    rslt = get_instance_index_page(instance_name, port, ip)
     raise Exception(rslt)
     port += 1
+  delete(deployment_name)
   
-  #delete(deployment_name)
+def get_instance_index_page(instance_name, port, ip):
+  call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port)+":"+str(ip)+":8080")
+  return call("curl http://localhost:"+str(port))
 
 class TestSimpleDeployment(object):
   """A test class for simple deployments.
@@ -149,52 +161,72 @@ class TestSimpleDeployment(object):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/quick_start/vm.yaml")
     call("sed -i.backup 's/\[FAMILY_NAME\]/debian-8/' examples/v2/quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
-  
+
   """
   def test_vpn_auto_subnet(self):
     # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
     # TODO figure out what values to use for the parameters
     "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
+  """
   
   def test_step_by_step_2(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
-    self.deploy("step_by_step_2", "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    deploy("step_by_step_2", "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
   
   def test_step_by_step_4(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step4_use_references/two-vms.yaml")
-    self.deploy("step_by_step_4", "step_by_step_guide/step4_use_references/two-vms.yaml")
+    deploy("step_by_step_4", "step_by_step_guide/step4_use_references/two-vms.yaml")
   
   def test_step_by_step_5(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
-    self.deploy("step_by_step_5_python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
-    self.deploy("step_by_step_5_jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+    deploy("step_by_step_5_python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+    deploy("step_by_step_5_jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     
   def test_step_by_step_6(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
-    self.deploy("step_by_step_6_python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
-    self.deploy("step_by_step_6_jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
+    deploy("step_by_step_6_python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
+    deploy("step_by_step_6_jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     
   def test_step_by_step_7(self):
-    self.deploy("step_by_step_7_python", "step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml")
-    self.deploy("step_by_step_7_jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
+    deploy("step_by_step_7_python", "step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml")
+    deploy("step_by_step_7_jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
     
   def test_step_by_step_8_9(self):
-    # TODO may want to refactor my deploy method to be broken up into two separate methods to test that the script is actually working
-   
-    self.create("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
-    self.create("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    create("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
+    create("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
     
-     # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
-     
-    self.update("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    self.update("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    
-    #TODO reset the vms: gcloud compute instances reset the-first-vm
-    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP"", and check the contents
-    #TODO delete
-    
+    parsed_python_instances = parse_ips("step_by_step_8_9_python")
+    parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
+
+    # TODO consider getting rid of port once I get this working
+    port = 8888
+    for instance_name, ip in parsed_python_instances.iteritems():
+      # rslt = get_instance_index_page(instance_name, port, ip)
+      port+=1
+    for instance_name, ip in parsed_jinja_instances.iteritems():
+      # rslt = get_instance_index_page(instance_name, port, ip)
+      port+=1
+
+    update("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    update("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    parsed_python_instances = parse_ips("step_by_step_8_9_python")
+    parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
+    # TODO check that the contents are updated now
+    for instance_name, ip in parsed_python_instances.iteritems():
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
+      rslt = get_instance_index_page(instance_name, port, ip)
+      port+=1
+    for instance_name, ip in parsed_jinja_instances.iteritems():
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
+      rslt = get_instance_index_page(instance_name, port, ip)
+      port+=1
+
+    delete("step_by_step_8_9_python")
+    delete("step_by_step_8_9_jinja")
+
+  """
   def test_step_by_step_10(self):
     self.create("step_by_step_10_python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
     self.create("step_by_step_10_jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
