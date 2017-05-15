@@ -107,8 +107,8 @@ def deploy_http_server(deployment_name, yaml_path):
   parsed_instances = parse_ips(deployment_name)
   port=8888
   for instance_name, ip in parsed_instances.iteritems():
-    call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+port+":"+ip+":80")
-    rslt = call("curl http://localhost:"+port)
+    call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port)+":"+str(ip)+":80")
+    rslt = call("curl http://localhost:"+str(port))
     raise Exception(rslt)
     port += 1
   
