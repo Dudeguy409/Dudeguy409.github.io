@@ -68,9 +68,16 @@ def call(command):
 def create_deployment(deployment_name, yaml_path):
   """Attempts to create a deployment, raising any errors."""
   deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
-  print "Beginning deployment of " + deployment_name + "..."  
+  print "Creating deployment of " + deployment_name + "..."  
   call(deployment_create_command)
-  print "Deployment complete."
+  print "Deployment created."
+  
+  def update_deployment(deployment_name, yaml_path):
+  """Attempts to update an existing deployment, raising any errors."""
+  deployment_update_command = "gcloud deployment-manager deployments update " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
+  print "Updating deployment of " + deployment_name + "..."  
+  call(deployment_update_command)
+  print "Deployment updated." 
 
 def check_deployment(deployment_name):
   deployment_describe_command = "gcloud deployment-manager deployments describe " + deployment_name + " --format=json --project=" + project_name
@@ -83,21 +90,15 @@ def check_deployment(deployment_name):
     
 def delete_deployment(deployment_name):
   deployment_delete_command = "gcloud deployment-manager deployments delete " + deployment_name + " -q --project="+ project_name
-  print "Deleting deployment..."
+  print "Deleting deployment of " + deployment_name + "..." 
   call(deployment_delete_command)
   print "Deployment deleted."
-  
-def update_deployment(deployment_name, yaml_path):
-  """Attempts to create a deployment, raising any errors."""
-  deployment_create_command = "gcloud deployment-manager deployments create " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
-  print "Beginning deployment of " + deployment_name + "..."  
-  call(deployment_create_command)
-  print "Deployment complete."  
 
 def deploy(deployment_name, yaml_path):
   """Attempts to create and delete a deployment, raising any errors."""
-  create(deployment_name, yaml_path)
-  delete(deployment_name)
+  create_deployment(deployment_name, yaml_path)
+  check_deployment(deployment_name)
+  delete_deployment(deployment_name)
 
 def parse_ips(deployment_name):
   instance_name_list=[]
@@ -112,7 +113,8 @@ def parse_ips(deployment_name):
   return ip_map
   
 def deploy_http_server(deployment_name, yaml_path):
-  create(deployment_name, yaml_path)
+  create_deployment(deployment_name, yaml_path)
+  check_deployment(deployment_name)
   parsed_instances = parse_ips(deployment_name)
   #TODO maybe get rid of port if possible
   port=8888
@@ -120,7 +122,7 @@ def deploy_http_server(deployment_name, yaml_path):
     rslt = get_instance_index_page(instance_name, port, ip)
     raise Exception(rslt)
     port += 1
-  delete(deployment_name)
+  delete_deployment(deployment_name)
   
 def get_instance_index_page(instance_name, port, ip):
   call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port)+":"+str(ip)+":8080")
@@ -194,26 +196,30 @@ class TestSimpleDeployment(object):
     deploy("step_by_step_7_jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
     
   def test_step_by_step_8_9(self):
-    create("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
-    create("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    create_deployment("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
+    check_deployment("step_by_step_8_9_python")
+    create_deployment("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    check_deployment("step_by_step_8_9_jinja")
     
     parsed_python_instances = parse_ips("step_by_step_8_9_python")
     parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
-
     # TODO consider getting rid of port once I get this working
     port = 8888
     for instance_name, ip in parsed_python_instances.iteritems():
-      # rslt = get_instance_index_page(instance_name, port, ip)
+      rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
     for instance_name, ip in parsed_jinja_instances.iteritems():
-      # rslt = get_instance_index_page(instance_name, port, ip)
+      rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
-    update("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    update("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    update_deployment("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    check_deployment("step_by_step_8_9_python")
+    update_deployment("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    check_deployment("step_by_step_8_9_jinja")
+    
     parsed_python_instances = parse_ips("step_by_step_8_9_python")
     parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
-    # TODO check that the contents are updated now
+    # TODO assert that the contents are updated now
     for instance_name, ip in parsed_python_instances.iteritems():
       call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
       rslt = get_instance_index_page(instance_name, port, ip)
@@ -223,8 +229,8 @@ class TestSimpleDeployment(object):
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
-    delete("step_by_step_8_9_python")
-    delete("step_by_step_8_9_jinja")
+    delete_deployment("step_by_step_8_9_python")
+    delete_deployment("step_by_step_8_9_jinja")
 
   """
   def test_step_by_step_10(self):
