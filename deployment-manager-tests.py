@@ -117,7 +117,7 @@ def deploy_http_server(deployment_name, yaml_path):
   check_deployment(deployment_name)
   parsed_instances = parse_ips(deployment_name)
   #TODO maybe get rid of port if possible
-  port=8888
+  port=8890
   for instance_name, ip in parsed_instances.iteritems():
     rslt = get_instance_index_page(instance_name, port, ip)
     raise Exception(rslt)
