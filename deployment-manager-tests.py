@@ -72,7 +72,7 @@ def create_deployment(deployment_name, yaml_path):
   call(deployment_create_command)
   print "Deployment created."
   
-  def update_deployment(deployment_name, yaml_path):
+def update_deployment(deployment_name, yaml_path):
   """Attempts to update an existing deployment, raising any errors."""
   deployment_update_command = "gcloud deployment-manager deployments update " + deployment_name + " --config examples/v2/" + yaml_path + " --project=" + project_name
   print "Updating deployment of " + deployment_name + "..."  
