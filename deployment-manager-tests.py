@@ -173,36 +173,36 @@ class TestSimpleDeployment(object):
   
   def test_step_by_step_2(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
-    deploy("step_by_step_2", "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    deploy("step-by-step-2", "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
   
   def test_step_by_step_4(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step4_use_references/two-vms.yaml")
-    deploy("step_by_step_4", "step_by_step_guide/step4_use_references/two-vms.yaml")
+    deploy("step-by-step-4", "step_by_step_guide/step4_use_references/two-vms.yaml")
   
   def test_step_by_step_5(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
-    deploy("step_by_step_5_python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
-    deploy("step_by_step_5_jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+    deploy("step-by-step-5-python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+    deploy("step-by-step-5-jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     
   def test_step_by_step_6(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
-    deploy("step_by_step_6_python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
-    deploy("step_by_step_6_jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
+    deploy("step-by-step-6-python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
+    deploy("step-by-step-6-jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     
   def test_step_by_step_7(self):
-    deploy("step_by_step_7_python", "step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml")
-    deploy("step_by_step_7_jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
+    deploy("step-by-step-7-python", "step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml")
+    deploy("step-by-step-7-jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
     
   def test_step_by_step_8_9(self):
-    create_deployment("step_by_step_8_9_python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
-    check_deployment("step_by_step_8_9_python")
-    create_deployment("step_by_step_8_9_jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
-    check_deployment("step_by_step_8_9_jinja")
+    create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-python")
+    create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-jinja")
     
-    parsed_python_instances = parse_ips("step_by_step_8_9_python")
-    parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
+    parsed_python_instances = parse_ips("step-by-step-8-9-python")
+    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO consider getting rid of port once I get this working
     port = 8888
     for instance_name, ip in parsed_python_instances.iteritems():
@@ -212,13 +212,13 @@ class TestSimpleDeployment(object):
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
-    update_deployment("step_by_step_8_9_python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    check_deployment("step_by_step_8_9_python")
-    update_deployment("step_by_step_8_9_jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    check_deployment("step_by_step_8_9_jinja")
+    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-python")
+    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-jinja")
     
-    parsed_python_instances = parse_ips("step_by_step_8_9_python")
-    parsed_jinja_instances = parse_ips("step_by_step_8_9_jinja")
+    parsed_python_instances = parse_ips("step-by-step-8-9-python")
+    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO assert that the contents are updated now
     for instance_name, ip in parsed_python_instances.iteritems():
       call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
@@ -229,13 +229,13 @@ class TestSimpleDeployment(object):
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
-    delete_deployment("step_by_step_8_9_python")
-    delete_deployment("step_by_step_8_9_jinja")
+    delete_deployment("step-by-step-8-9-python")
+    delete_deployment("step-by-step-8-9-jinja")
 
   """
   def test_step_by_step_10(self):
-    self.create("step_by_step_10_python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
-    self.create("step_by_step_10_jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
+    self.create("step-by-step-10-python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
+    self.create("step-by-step-10-jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
     # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
   """
   
