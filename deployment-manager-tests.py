@@ -183,11 +183,13 @@ class TestSimpleDeployment(object):
     deploy("step-by-step-4", "step_by_step_guide/step4_use_references/two-vms.yaml")
   
   def test_step_by_step_5_python(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/vm-template.py")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/vm-template-2.py")
     deploy("step-by-step-5-python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
 
   def test_step_by_step_5_jinja(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja")
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja")
     deploy("step-by-step-5-jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     
   def test_step_by_step_6_python(self):
