@@ -152,11 +152,14 @@ class TestSimpleDeployment(object):
     call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/waiter/config.yaml")
     deploy("waiter", "waiter/config.yaml")
   
-  def test_vm_startup_script(self):
+  def test_vm_startup_script_python(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
     call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/python/vm.yaml")
-    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
     deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
+    
+  def test_vm_startup_script_jinja(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
     deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
   
   def test_quick_start(self):
@@ -179,57 +182,72 @@ class TestSimpleDeployment(object):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step4_use_references/two-vms.yaml")
     deploy("step-by-step-4", "step_by_step_guide/step4_use_references/two-vms.yaml")
   
-  def test_step_by_step_5(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+  def test_step_by_step_5_python(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
     deploy("step-by-step-5-python", "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+
+  def test_step_by_step_5_jinja(self):
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     deploy("step-by-step-5-jinja", "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
     
-  def test_step_by_step_6(self):
-    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
+  def test_step_by_step_6_python(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
     deploy("step-by-step-6-python", "step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml")
+     
+  def test_step_by_step_6_jinja(self):
+    call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     deploy("step-by-step-6-jinja", "step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml")
     
-  def test_step_by_step_7(self):
+  def test_step_by_step_7_python(self):
     deploy("step-by-step-7-python", "step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml")
+
+  def test_step_by_step_7_jinja(self):
     deploy("step-by-step-7-jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
     
-  def test_step_by_step_8_9(self):
+  def test_step_by_step_8_9_python(self):
     create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
-    create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-jinja")
     
     parsed_python_instances = parse_ips("step-by-step-8-9-python")
-    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO consider getting rid of port once I get this working
     port = 8888
     for instance_name, ip in parsed_python_instances.iteritems():
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
-    for instance_name, ip in parsed_jinja_instances.iteritems():
-      rslt = get_instance_index_page(instance_name, port, ip)
-      port+=1
 
     update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
-    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-jinja")
     
     parsed_python_instances = parse_ips("step-by-step-8-9-python")
-    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO assert that the contents are updated now
     for instance_name, ip in parsed_python_instances.iteritems():
       call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
+
+    delete_deployment("step-by-step-8-9-python")
+    
+  def test_step_by_step_8_9_jinja(self):
+    create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-jinja")
+    
+    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
+    # TODO consider getting rid of port once I get this working
+    port = 8888
+    for instance_name, ip in parsed_jinja_instances.iteritems():
+      rslt = get_instance_index_page(instance_name, port, ip)
+      port+=1
+
+    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-jinja")
+    
+    parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
+    # TODO assert that the contents are updated now
     for instance_name, ip in parsed_jinja_instances.iteritems():
       call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
-    delete_deployment("step-by-step-8-9-python")
     delete_deployment("step-by-step-8-9-jinja")
 
   """
