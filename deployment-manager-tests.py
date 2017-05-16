@@ -125,7 +125,7 @@ def deploy_http_server(deployment_name, yaml_path):
   delete_deployment(deployment_name)
   
 def get_instance_index_page(instance_name, port, ip):
-  call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port)+":"+str(ip)+":8080")
+  call("gcloud compute ssh user@"+instance_name+" --zone "+zone+" -- -N -L "+str(port).strip()+":"+str(ip).strip()+":8080")
   return call("curl http://localhost:"+str(port))
 
 class TestSimpleDeployment(object):
