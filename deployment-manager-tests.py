@@ -270,6 +270,29 @@ class TestSimpleDeployment(object):
   
   
   """  
+  
+  def test_build_config_add_templates_jinja(self):
+    # TODO zone is us-central1-a
+    deploy("build-config-add-templates-jinja",
+           "build_configuration/add_templates/jinja/use_vm_template.yaml")
+    
+  def test_build_config_add_templates_python(self):
+    # TODO zone is us-central1-a
+    deploy("build-config-add-templates-python",
+           "build_configuration/add_templates/python/use_vm_template.yaml")  
+  
+  def test_single_vm_jinja(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/" + default_zone + "/' examples/v2/single_vm/jinja/vm.yaml")
+    deploy("single-vm",
+           "single_vm/jinja/vm.yaml")
+    
+  def test_single_vm_python(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/" + default_zone + "/' examples/v2/single_vm/python/vm.yaml")
+    deploy("single-vm",
+           "single_vm/python/vm.yaml")
+    
   def test_build_config_use_outputs(self):
     deploy("build-config-use-outputs",
            "build_configuration/use_outputs/use_template_with_outputs.yaml")
