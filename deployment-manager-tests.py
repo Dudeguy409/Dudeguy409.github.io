@@ -185,6 +185,7 @@ class TestSimpleDeployment(object):
            "build_configuration/vm_and_bigquery.yaml")
 
   def test_ssl(self):
+    # TODO should we interact with the deployment to make sure that it works?  Or is the simple warning-free deployment of an SSL certificate enough?
     deploy("ssl", "ssl/ssl.yaml")
 
   def test_waiter(self):
@@ -262,7 +263,21 @@ class TestSimpleDeployment(object):
   def test_step_by_step_7_jinja(self):
     deploy("step-by-step-7-jinja",
            "step_by_step_guide/step7_use_environment_variables"
-           "/jinja/config-with-many-templates.yaml") 
+           "/jinja/config-with-many-templates.yaml")
+  """
+  
+  
+  
+  
+  """  
+  def test_build_config_use_outputs(self):
+    deploy("build-config-use-outputs",
+           "build_configuration/use_outputs/use_template_with_outputs.yaml")
+    
+  def test_build_config_explicit_dependencies(self):
+    # TODO zone is us-central1-a
+    deploy("build-config-explicit-dependencies",
+           "build_configuration/explicit_dependencies/backend_frontend_instances.yaml")
   """
   def test_vm_startup_script_python(self):
     # Replace the placeholder "ZONE_TO_RUN" with an actual zone
@@ -290,7 +305,8 @@ class TestSimpleDeployment(object):
     for instance_name, ip in parsed_python_instances.iteritems():
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
-
+    
+    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
     update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
     
@@ -304,6 +320,7 @@ class TestSimpleDeployment(object):
     delete_deployment("step-by-step-8-9-python")
     
   def test_step_by_step_8_9_jinja(self):
+    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
     create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-jinja")
     
@@ -313,7 +330,8 @@ class TestSimpleDeployment(object):
     for instance_name, ip in parsed_jinja_instances.iteritems():
       rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
-
+    
+    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
     update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-jinja")
     
@@ -330,7 +348,7 @@ class TestSimpleDeployment(object):
   def test_step_by_step_10(self):
     self.create("step-by-step-10-python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
     self.create("step-by-step-10-jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
-    # TODO create an SSH tunnel to connect to "gcloud compute instances describe the-first-vm | grep "natIP""
+    # TODO when I have time, read through this example and make sure my test will deploy it correctly
   """
   
   
