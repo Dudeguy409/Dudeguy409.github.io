@@ -152,27 +152,10 @@ class TestSimpleDeployment(object):
     call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/waiter/config.yaml")
     deploy("waiter", "waiter/config.yaml")
   
-  def test_vm_startup_script_python(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/python/vm.yaml")
-    deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
-    
-  def test_vm_startup_script_jinja(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
-    deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
-  
   def test_quick_start(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/quick_start/vm.yaml")
     call("sed -i.backup 's/\[FAMILY_NAME\]/debian-8/' examples/v2/quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
-
-  """
-  def test_vpn_auto_subnet(self):
-    # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
-    # TODO figure out what values to use for the parameters
-    "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
-  """
   
   def test_step_by_step_2(self):
     call("sed -i.backup 's/\[MY_PROJECT\]/" + project_name + "/' examples/v2/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
@@ -207,7 +190,23 @@ class TestSimpleDeployment(object):
 
   def test_step_by_step_7_jinja(self):
     deploy("step-by-step-7-jinja", "step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml")
+  
+  """
+  def test_vm_startup_script_python(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/python/vm.yaml")
+    deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
     
+  def test_vm_startup_script_jinja(self):
+    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
+    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
+    deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
+
+  def test_vpn_auto_subnet(self):
+    # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
+    # TODO figure out what values to use for the parameters
+    "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
+
   def test_step_by_step_8_9_python(self):
     create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
@@ -254,7 +253,7 @@ class TestSimpleDeployment(object):
 
     delete_deployment("step-by-step-8-9-jinja")
 
-  """
+  
   def test_step_by_step_10(self):
     self.create("step-by-step-10-python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
     self.create("step-by-step-10-jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
