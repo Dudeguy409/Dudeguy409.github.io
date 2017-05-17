@@ -208,6 +208,7 @@ class TestSimpleDeployment(object):
     "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
 
   def test_step_by_step_8_9_python(self):
+    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
     create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
     
