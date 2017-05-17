@@ -25,7 +25,9 @@ nosetests -v -s deployment-manager-tests.py
 
 In order to create a temporary project in which to create and delete these test
 deployments, follow the instrictions in the project creation github example:
+
 https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
+
 Then, before running the tests, set the environment variables for your specific
 project.  If "DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT" is set to "TRUE", the
 tests will be run in a new project.  If not, they will be run in your default
