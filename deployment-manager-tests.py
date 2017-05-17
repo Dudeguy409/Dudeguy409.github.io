@@ -314,6 +314,7 @@ class TestSimpleDeployment(object):
 
   def test_vpn_auto_subnet(self):
     # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
+    #TODO How are we going to test this with the firewall?
     # TODO figure out what values to use for the parameters
     "gcloud deployment-manager deployments create vpn-auto-subnet --config vpn-auto-subnet.jinja --project PROJECT_NAME --properties \"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\""
 
@@ -372,6 +373,16 @@ class TestSimpleDeployment(object):
     self.create("step-by-step-10-python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
     self.create("step-by-step-10-jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
     # TODO when I have time, read through this example and make sure my test will deploy it correctly
+    
+  def test_common_jinja(self):
+    #TODO add test for this black magic example
+    pass
+    
+  def test_common_python(self):
+    #TODO add test for this black magic example
+    pass
+    
+    
   """
   
   
