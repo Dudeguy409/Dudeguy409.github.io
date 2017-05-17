@@ -20,7 +20,7 @@ in the uderlying APIs that the examples use.  This program can be run locally on
 your machine as long as your Google Cloud SDK has been installed and configured, and
 you have installed the nose python testing framework.  To run this test from the
 command line, try:
-nosetests -v deployment-manager-tests.py
+nosetests -v -s deployment-manager-tests.py
 
 In order to create a temporary project in which to create and delete these test deployments, follow the instrictions in the project creation github example:
 https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
