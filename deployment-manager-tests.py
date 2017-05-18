@@ -368,7 +368,35 @@ class TestSimpleDeployment(object):
   def test_container_vm_jinja(self):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/jinja/container_vm.yaml")
     deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
     
-  def test_container_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/jinja/container_vm.yaml")
+  def test_container_vm_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/python/container_vm.yaml")
     deploy("container-vm-python", "container_vm/python/container_vm.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+    
+  def test_nodejs_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs/jinja/nodejs.yaml")
+    deploy("nodejs-jinja", "nodejs/jinja/nodejs.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+    
+  def test_nodejs_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs/python/nodejs.yaml")
+    deploy("nodejs-python", "nodejs/python/nodejs.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly  
+    
+  def test_regional_igm(self):
+    deploy("regional-igm", "regional_igm/regional_igm.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly  
+    
+  def test_nodejs_l7_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/jinja/application.yaml")
+    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", "us-central1-f", "nodejs_l7/jinja/application.yaml")
+    deploy("nodejs-l7-jinja", "nodejs_l7/jinja/application.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+    
+  def test_nodejs_l7_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/python/application.yaml")
+    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", "us-central1-f", "nodejs_l7/python/application.yaml")
+    deploy("nodejs-l7-python", "nodejs_l7/python/application.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
