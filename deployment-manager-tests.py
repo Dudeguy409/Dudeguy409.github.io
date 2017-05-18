@@ -81,7 +81,9 @@ def call(command):
     return result
   except subprocess.CalledProcessError as  e:
     raise Exception(e.output)
-
+    
+def replace_placeholder_in_file(search_for, replace_with, file):
+  call("sed -i.backup 's/" + search_for + "/" + replace_with + "/' examples/v2/" + file)
 
 def create_deployment(deployment_name, yaml_path):
   """Attempts to create a deployment, raising any errors."""
@@ -215,22 +217,14 @@ class TestSimpleDeployment(object):
            "step_by_step_guide/step4_use_references/two-vms.yaml")
 
   def test_step_by_step_5_python(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step5_create_a_template/python/vm-template.py")
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step5_create_a_template/python/vm-template-2.py")
+    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/python/vm-template.py")
+    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/python/vm-template-2.py")
     deploy("step-by-step-5-python",
            "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
 
   def test_step_by_step_5_jinja(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step5_create_a_template/jinja/vm-template.jinja")
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step5_create_a_template/jinja/vm-template-2.jinja")
+    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja")
+    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja")
     deploy("step-by-step-5-jinja",
            "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
 
@@ -388,3 +382,11 @@ class TestSimpleDeployment(object):
   def test_common_python(self):
     #TODO add test for this black magic example
     pass
+  
+  def test_container_vm_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/jinja/container_vm.yaml")
+    deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
+    
+  def test_container_vm_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/jinja/container_vm.yaml")
+    deploy("container-vm-python", "container_vm/python/container_vm.yaml")
