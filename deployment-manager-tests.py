@@ -192,16 +192,12 @@ class TestSimpleDeployment(object):
     deploy("ssl", "ssl/ssl.yaml")
 
   def test_waiter(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/" + default_zone
-         + "/' examples/v2/waiter/config.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "waiter/config.yaml")
     deploy("waiter", "waiter/config.yaml")
 
   def test_quick_start(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/quick_start/vm.yaml")
-    call("sed -i.backup 's/\\[FAMILY_NAME\\]/debian-8/' "
-         "examples/v2/quick_start/vm.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "quick_start/vm.yaml")
+    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8", "quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
 
   def test_step_by_step_2(self):
