@@ -417,4 +417,6 @@ class TestSimpleDeployment(object):
     # TODO zone is us-central1-f
     deploy("container-igm-python","container_igm/python/container_igm.yaml")
     
-    
+  def test_iam(self):
+    deploy("iam", "iam/jinja/accessible_resource.yaml")
+    # TODO make sure that this is actually deploying correctly
