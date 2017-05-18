@@ -420,3 +420,7 @@ class TestSimpleDeployment(object):
   def test_iam(self):
     deploy("iam", "iam/jinja/accessible_resource.yaml")
     # TODO make sure that this is actually deploying correctly
+    
+  def test_htcondor(self):
+    # TODO read the tutorial and figure out how to deploy this
+    pass
