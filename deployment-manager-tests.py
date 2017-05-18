@@ -400,3 +400,13 @@ class TestSimpleDeployment(object):
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", "us-central1-f", "nodejs_l7/python/application.yaml")
     deploy("nodejs-l7-python", "nodejs_l7/python/application.yaml")
     # TODO(davidsac) ensure after deployment that this deployed correctly
+    
+  def test_vm_with_disks_jinja(self):
+    # TODO zone is us-central1-a
+    deploy("vm-with-disks-jinja", "vm_with_disks/jinja/vm_with_disks.yaml.")
+    
+  def test_vm_with_disks_python(self):
+    # TODO zone is us-central1-a
+    deploy("vm-with-disks-python", "vm_with_disks/python/vm_with_disks.yaml.")
+    
+    
