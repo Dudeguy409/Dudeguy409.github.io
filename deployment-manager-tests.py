@@ -358,11 +358,11 @@ class TestSimpleDeployment(object):
     pass
     
   def test_common_jinja(self):
-    #TODO add test for this black magic example
+    #TODO do I need to add tests for these?  It doesn't seem like there are any deploymets here, just utility files for other deployments
     pass
     
   def test_common_python(self):
-    #TODO add test for this black magic example
+    #TODO do I need to add tests for these?  It doesn't seem like there are any deploymets here, just utility files for other deployments
     pass
   
   def test_container_vm_jinja(self):
