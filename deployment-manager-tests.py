@@ -409,4 +409,12 @@ class TestSimpleDeployment(object):
     # TODO zone is us-central1-a
     deploy("vm-with-disks-python", "vm_with_disks/python/vm_with_disks.yaml.")
     
+  def test_container_igm_jinja(self):
+    # TODO zone is us-central1-f
+    deploy("container-igm-jinja","container_igm/jinja/container_igm.yaml")
+    
+  def test_container_igm_python(self):
+    # TODO zone is us-central1-f
+    deploy("container-igm-python","container_igm/python/container_igm.yaml")
+    
     
