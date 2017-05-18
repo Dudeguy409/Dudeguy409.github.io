@@ -205,47 +205,37 @@ class TestSimpleDeployment(object):
     deploy("quick-start", "quick_start/vm.yaml")
 
   def test_step_by_step_2(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name + "/' examples/v2"
-         "/step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
     deploy("step-by-step-2",
            "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
 
   def test_step_by_step_4(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name + "/' examples/v2"
-         "/step_by_step_guide/step4_use_references/two-vms.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step4_use_references/two-vms.yaml")
     deploy("step-by-step-4",
            "step_by_step_guide/step4_use_references/two-vms.yaml")
 
   def test_step_by_step_5_python(self):
-    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/python/vm-template.py")
-    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/python/vm-template-2.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/python/vm-template-2.py")
     deploy("step-by-step-5-python",
            "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
 
   def test_step_by_step_5_jinja(self):
-    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja")
-    replace_placeholder_in_file(search_for = "\\[MY_PROJECT\\]", replace_with = project_name, file = "step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja")
     deploy("step-by-step-5-jinja",
            "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
 
   def test_step_by_step_6_python(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step6_use_multiple_templates/python/vm-template.py")
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide"
-         "/step6_use_multiple_templates/python/vm-template-2.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/python/vm-template-2.py")
     deploy("step-by-step-6-python",
            "step_by_step_guide/step6_use_multiple_templates"
            "/python/config-with-many-templates.yaml")
 
   def test_step_by_step_6_jinja(self):
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         +"/' examples/v2/step_by_step_guide/step6_use_multiple_templates"
-         "/jinja/vm-template.jinja")
-    call("sed -i.backup 's/\\[MY_PROJECT\\]/" + project_name
-         + "/' examples/v2/step_by_step_guide/step6_use_multiple_templates"
-         "/jinja/vm-template-2.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/jinja/vm-template-2.jinja")
     deploy("step-by-step-6-jinja",
            "step_by_step_guide/step6_use_multiple_templates"
            "/jinja/config-with-many-templates.yaml")
@@ -277,14 +267,12 @@ class TestSimpleDeployment(object):
            "build_configuration/add_templates/python/use_vm_template.yaml")  
   
   def test_single_vm_jinja(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/" + default_zone + "/' examples/v2/single_vm/jinja/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "single_vm/jinja/vm.yaml")
     deploy("single-vm",
            "single_vm/jinja/vm.yaml")
     
   def test_single_vm_python(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/" + default_zone + "/' examples/v2/single_vm/python/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "single_vm/python/vm.yaml")
     deploy("single-vm",
            "single_vm/python/vm.yaml")
     
@@ -298,13 +286,11 @@ class TestSimpleDeployment(object):
            "build_configuration/explicit_dependencies/backend_frontend_instances.yaml")
 
   def test_vm_startup_script_python(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/python/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "vm_startup_script/python/vm.yaml")
     deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
     
   def test_vm_startup_script_jinja(self):
-    # Replace the placeholder "ZONE_TO_RUN" with an actual zone
-    call("sed -i.backup 's/ZONE_TO_RUN/"+zone+"/' examples/v2/vm_startup_script/jinja/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "vm_startup_script/jinja/vm.yaml")
     deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
 
   def test_vpn_auto_subnet(self):
