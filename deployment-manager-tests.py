@@ -468,3 +468,12 @@ class TestSimpleDeployment(object):
   def test_metadata_from_file_python(self):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "metadata_from_file/python/config.yaml")
     deploy_http_server("metadata-from-file-python", "metadata_from_file/python/config.yaml")
+    
+  def test_instance_pool_jinja(self):
+    deploy("instance-pool-jinja", "instance_pool/jinja/instance-pool.yaml")
+    # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
+    
+  def test_instance_pool_python(self):
+    deploy("instance-pool-python", "instance_pool/python/instance-pool.yaml")
+    # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
+    
