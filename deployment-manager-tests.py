@@ -482,3 +482,14 @@ class TestSimpleDeployment(object):
     update_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
+    
+  def test_igm_updater_python(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    deployment_name = "igm-updater-python"
+    create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml")
+    check_deployment(deployment_name)
+    update_deployment(deployment_name, "igm-updater/python/frontendver2.yaml")
+    check_deployment(deployment_name)
+    update_deployment(deployment_name, "igm-updater/python/frontendver3.yaml")
+    check_deployment(deployment_name)
+    delete_deployment(deployment_name)
