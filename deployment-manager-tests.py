@@ -497,3 +497,19 @@ class TestSimpleDeployment(object):
   def test_internal_lb(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deploy("internal-lb", "internal_lb/python/config.yaml")
+    
+  def test_internal_lb_haproxy_jinja(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/jinja/config.yaml")
+    deploy("internal-lb-haproxy-jinja", "internal_lb_haproxy/jinja/config.yaml")
+    
+  # TODO(davidsac): There are two copies of the python files it seems.  Which ones are the most up-to-date?  
+  def test_internal_lb_haproxy_python_a(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/python/config.yaml")
+    deploy("internal-lb-haproxy-python-a",)
+  
+  def test_internal_lb_haproxy_python_b(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/config.yaml")
+    deploy("internal-lb-haproxy-python-b",)
