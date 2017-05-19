@@ -477,3 +477,12 @@ class TestSimpleDeployment(object):
     deploy("instance-pool-python", "instance_pool/python/instance-pool.yaml")
     # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
     
+  def test_image_based_igm_jinja(self):
+    # TODO specify properties: --properties targetSize:3,zone:us-central1-f,maxReplicas:5
+    # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
+    deploy("image-based-igm-jinja", "image_based_igm/image_based_igm.jinja")
+    
+  def test_image_based_igm_python(self):
+    # TODO specify properties: --properties targetSize:3,zone:us-central1-f,maxReplicas:5
+    # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
+    deploy("image-based-igm-python", "image_based_igm/image_based_igm.py")
