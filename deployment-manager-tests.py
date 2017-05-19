@@ -486,3 +486,14 @@ class TestSimpleDeployment(object):
     # TODO specify properties: --properties targetSize:3,zone:us-central1-f,maxReplicas:5
     # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
     deploy("image-based-igm-python", "image_based_igm/image_based_igm.py")
+    
+  def test_igm_updater_jinja(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    deployment_name = "igm-updater-jinja"
+    create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml")
+    check_deployment(deployment_name)
+    update_deployment(deployment_name, "igm-updater/jinja/frontendver2.yaml")
+    check_deployment(deployment_name)
+    update_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
+    check_deployment(deployment_name)
+    delete_deployment(deployment_name)
