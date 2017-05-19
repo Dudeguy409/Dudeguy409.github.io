@@ -393,6 +393,24 @@ class TestSimpleDeployment(object):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/jinja/application.yaml")
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", "us-central1-f", "nodejs_l7/jinja/application.yaml")
     deploy("nodejs-l7-jinja", "nodejs_l7/jinja/application.yaml")
+    # NOTE: Due to the fact that IGM does not allow specifying service/port to
+# created IG, you must run the following commands after creation of the
+# template:
+#
+# export DEPLOYMENT=<DEPLOYMENT NAME>
+# export PRIMARY_ZONE=<PRIMARY ZONE>
+# export SECONDARY_ZONE=<SECONDARY ZONE>
+#
+# gcloud compute instance-groups unmanaged set-named-ports frontend-${DEPLOYMENT}-pri-igm \
+#  --named-ports http:8080,httpstatic:8080 \
+#  --zone ${PRIMARY_ZONE}
+#
+# gcloud compute instance-groups unmanaged set-named-ports frontend-${DEPLOYMENT}-sec-igm \
+#  --named-ports http:8080,httpstatic:8080 \
+#  --zone ${SECONDARY_ZONE}
+#
+# Then to see the IP that exposes the application, you can do:
+# gcloud compute forwarding-rules list | grep application-${DEPLOYMENT}-l7lb
     # TODO(davidsac) ensure after deployment that this deployed correctly
     
   def test_nodejs_l7_python(self):
@@ -400,6 +418,24 @@ class TestSimpleDeployment(object):
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", "us-central1-f", "nodejs_l7/python/application.yaml")
     deploy("nodejs-l7-python", "nodejs_l7/python/application.yaml")
     # TODO(davidsac) ensure after deployment that this deployed correctly
+    # NOTE: Due to the fact that IGM does not allow specifying service/port to
+# created IG, you must run the following commands after creation of the
+# template:
+#
+# export DEPLOYMENT=<DEPLOYMENT NAME>
+# export PRIMARY_ZONE=<PRIMARY ZONE>
+# export SECONDARY_ZONE=<SECONDARY ZONE>
+#
+# gcloud compute instance-groups unmanaged set-named-ports frontend-${DEPLOYMENT}-pri-igm \
+#  --named-ports http:8080,httpstatic:8080 \
+#  --zone ${PRIMARY_ZONE}
+#
+# gcloud compute instance-groups unmanaged set-named-ports frontend-${DEPLOYMENT}-sec-igm \
+#  --named-ports http:8080,httpstatic:8080 \
+#  --zone ${SECONDARY_ZONE}
+#
+# Then to see the IP that exposes the application, you can do:
+# gcloud compute forwarding-rules list | grep application-${DEPLOYMENT}-l7lb
     
   def test_vm_with_disks_jinja(self):
     # TODO zone is us-central1-a
