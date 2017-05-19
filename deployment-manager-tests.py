@@ -460,3 +460,11 @@ class TestSimpleDeployment(object):
   def test_htcondor(self):
     # TODO read the tutorial and figure out how to deploy this
     pass
+  
+  def test_metadata_from_file_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "metadata_from_file/jinja/config.yaml")
+    deploy_http_server("metadata-from-file-jinja", "metadata_from_file/jinja/config.yaml")
+    
+  def test_metadata_from_file_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "metadata_from_file/python/config.yaml")
+    deploy_http_server("metadata-from-file-python", "metadata_from_file/python/config.yaml")
