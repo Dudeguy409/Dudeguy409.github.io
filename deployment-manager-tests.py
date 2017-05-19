@@ -85,11 +85,13 @@ def call(command):
 def replace_placeholder_in_file(search_for, replace_with, file):
   call("sed -i.backup 's/" + search_for + "/" + replace_with + "/' examples/v2/" + file)
 
-def create_deployment(deployment_name, yaml_path):
+def create_deployment(deployment_name, yaml_path, properties=None):
   """Attempts to create a deployment, raising any errors."""
   deployment_create_command = ("gcloud deployment-manager deployments create "
                                + deployment_name + " --config examples/v2/"
                                + yaml_path + " --project=" + project_name)
+  if properties:
+    deployment_create_command += " --properties " + properties
   print "Creating deployment of " + deployment_name + "..."
   call(deployment_create_command)
   print "Deployment created."
@@ -457,14 +459,18 @@ class TestSimpleDeployment(object):
     # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
     
   def test_image_based_igm_jinja(self):
-    # TODO specify properties: --properties targetSize:3,zone:us-central1-f,maxReplicas:5
     # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
-    deploy("image-based-igm-jinja", "image_based_igm/image_based_igm.jinja")
+    deployment_name = "image-based-igm-jinja" 
+    deploy(deployment_name, "image_based_igm/image_based_igm.jinja", "\\\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\\\"")
+    check_deployment(deployment_name)
+    delete_deployment(deployment_name)
     
   def test_image_based_igm_python(self):
-    # TODO specify properties: --properties targetSize:3,zone:us-central1-f,maxReplicas:5
     # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
-    deploy("image-based-igm-python", "image_based_igm/image_based_igm.py")
+    deployment_name = "image-based-igm-python"
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.py", "\\\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\\\"")
+    check_deployment(deployment_name)
+    delete_deployment(deployment_name)
     
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
