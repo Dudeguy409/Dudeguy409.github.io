@@ -493,3 +493,7 @@ class TestSimpleDeployment(object):
     update_deployment(deployment_name, "igm-updater/python/frontendver3.yaml")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
+    
+  def test_internal_lb(self):
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    deploy("internal-lb", "internal_lb/python/config.yaml")
