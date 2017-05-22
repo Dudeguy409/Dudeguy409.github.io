@@ -308,6 +308,7 @@ class TestSimpleDeployment(object):
     parsed_python_instances = parse_ips("step-by-step-8-9-python")
     for instance_name, ip in parsed_python_instances.iteritems():
       # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      pass
     
     # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
     update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
@@ -327,10 +328,9 @@ class TestSimpleDeployment(object):
     
     parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO consider getting rid of port once I get this working
-    port = default_ssh_tunnel_port
     for instance_name, ip in parsed_jinja_instances.iteritems():
-      # rslt = get_instance_index_page(instance_name, port, ip)
-      port+=1
+      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      pass
     
     # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b.
     update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
