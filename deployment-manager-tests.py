@@ -163,6 +163,7 @@ def deploy_http_server(deployment_name, yaml_path):
   check_deployment(deployment_name)
   parsed_instances = parse_ips(deployment_name)
   for instance_name, ip in parsed_instances.iteritems():
+    pass
     # TODO(davidsac) assert that the value is what is expected
     # get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
   delete_deployment(deployment_name)
