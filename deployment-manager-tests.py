@@ -83,6 +83,7 @@ def call(command):
     raise Exception(e.output)
     
 def replace_placeholder_in_file(search_for, replace_with, file):
+  # FIXME(davidsac): Host this test file in the testing folder of the repo, and update these tests to copy over the example folder and make changes and deployments with it.
   call("sed -i.backup 's/" + search_for + "/" + replace_with + "/' examples/v2/" + file)
 
 def create_deployment(deployment_name, yaml_path, properties=None):
