@@ -395,8 +395,8 @@ class TestSimpleDeployment(object):
     
   def test_nodejs_l7_jinja(self):
     secondary_zone = "us-central1-f"
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/jinja/application.yaml")
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone, "nodejs_l7/jinja/application.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/jinja/application.yaml")
     deployment_name = "nodejs-l7-jinja"
     create_deployment(deployment_name, "nodejs_l7/jinja/application.yaml")
     check_deployment(deployment_name)
@@ -405,12 +405,11 @@ class TestSimpleDeployment(object):
     call("gcloud compute instance-groups unmanaged set-named-ports frontend-" + deployment_name + "-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
     call("gcloud compute forwarding-rules list | grep application-" + deployment_name + "-l7lb")
     delete_deployment(deployment_name)
-   
-    
+ 
   def test_nodejs_l7_python(self):
     secondary_zone = "us-central1-f"
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/python/application.yaml")
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone, "nodejs_l7/python/application.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/python/application.yaml")
     deployment_name = "nodejs-l7-python"
     create_deployment(deployment_name, "nodejs_l7/python/application.yaml")
     check_deployment(deployment_name)
