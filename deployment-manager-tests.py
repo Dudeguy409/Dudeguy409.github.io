@@ -509,9 +509,9 @@ class TestSimpleDeployment(object):
   def test_internal_lb_haproxy_python_a(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/python/config.yaml")
-    deploy("internal-lb-haproxy-python-a",)
+    deploy("internal-lb-haproxy-python-a", "internal_lb_haproxy/python/config.yaml")
   
   def test_internal_lb_haproxy_python_b(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/config.yaml")
-    deploy("internal-lb-haproxy-python-b",)
+    deploy("internal-lb-haproxy-python-b", "internal_lb_haproxy/config.yaml")
