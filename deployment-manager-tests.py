@@ -159,20 +159,17 @@ def deploy_http_server(deployment_name, yaml_path):
   create_deployment(deployment_name, yaml_path)
   check_deployment(deployment_name)
   parsed_instances = parse_ips(deployment_name)
-  # TODO(davidsac) maybe get rid of port if possible
-  port = default_ssh_tunnel_port
   for instance_name, ip in parsed_instances.iteritems():
     # TODO(davidsac) assert that the value is what is expected
-    # get_instance_index_page(instance_name, port, ip)
-    port += 1
+    # get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
   delete_deployment(deployment_name)
 
 
-def get_instance_index_page(instance_name, port, ip):
+def get_instance_index_page(instance_name, local_port, ip):
   # TODO fix
   call("gcloud compute ssh user@" + instance_name + " --zone " + default_zone
        + " -- -N -L " + str(port).strip() + ":" + str(ip).strip() + ":8080")
-  return call("curl http://localhost:"+str(port))
+  return call("curl http://localhost:"+str(local_port))
 
 
 class TestSimpleDeployment(object):
