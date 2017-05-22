@@ -317,7 +317,8 @@ class TestSimpleDeployment(object):
     parsed_python_instances = parse_ips("step-by-step-8-9-python")
     # TODO assert that the contents are updated now
     for instance_name, ip in parsed_python_instances.iteritems():
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
+      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone=us-central1-f" )
       # rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
@@ -335,14 +336,15 @@ class TestSimpleDeployment(object):
       # rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
     
-    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
+    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b.
     update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-jinja")
     
     parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO assert that the contents are updated now
     for instance_name, ip in parsed_jinja_instances.iteritems():
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name)
+      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone=us-central1-f" )
       # rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
 
