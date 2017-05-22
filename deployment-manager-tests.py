@@ -38,6 +38,8 @@ import json
 import os
 import subprocess
 
+# The variables immediately below are used to create a new project in which to make test deployments, but only if the environment variable "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example instructions on GitHub to see what value to assign each variable:
+# https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
 project_deployment_name = os.environ.get("DM_TEST_DEPLOYMENT_NAME")
 project_to_create = os.environ.get("DM_TEST_PROJECT_TO_CREATE")
 organization = os.environ.get("DM_TEST_ORGANIZATION_ID")
@@ -46,6 +48,7 @@ service_account_b = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_B")
 service_account_c = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_C")
 billing_account = os.environ.get("DM_TEST_BILLING_ACCOUNT")
 account_to_create = os.environ.get("DM_TEST_SERVICE_ACCOUNT_TO_CREATE")
+
 host_project = os.environ.get("DM_TEST_HOST_PROJECT")
 create_new_project = os.environ.get("DM_TEST_CREATE_NEW_PROJECT") == "TRUE"
 project_name = project_to_create if create_new_project else host_project
