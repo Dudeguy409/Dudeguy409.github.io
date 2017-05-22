@@ -50,6 +50,7 @@ host_project = os.environ.get("DM_TEST_HOST_PROJECT")
 create_new_project = os.environ.get("DM_TEST_CREATE_NEW_PROJECT") == "TRUE"
 project_name = project_to_create if create_new_project else host_project
 default_zone = "us-west1-b"
+default_ssh_tunnel_port = 8890
 
 
 def setup_module():
@@ -159,7 +160,7 @@ def deploy_http_server(deployment_name, yaml_path):
   check_deployment(deployment_name)
   parsed_instances = parse_ips(deployment_name)
   # TODO(davidsac) maybe get rid of port if possible
-  port = 8890
+  port = default_ssh_tunnel_port
   for instance_name, ip in parsed_instances.iteritems():
     # TODO(davidsac) assert that the value is what is expected
     # get_instance_index_page(instance_name, port, ip)
@@ -306,7 +307,7 @@ class TestSimpleDeployment(object):
     
     parsed_python_instances = parse_ips("step-by-step-8-9-python")
     # TODO consider getting rid of port once I get this working
-    port = 8888
+    port = default_ssh_tunnel_port
     for instance_name, ip in parsed_python_instances.iteritems():
       # rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
@@ -332,7 +333,7 @@ class TestSimpleDeployment(object):
     
     parsed_jinja_instances = parse_ips("step-by-step-8-9-jinja")
     # TODO consider getting rid of port once I get this working
-    port = 8888
+    port = default_ssh_tunnel_port
     for instance_name, ip in parsed_jinja_instances.iteritems():
       # rslt = get_instance_index_page(instance_name, port, ip)
       port+=1
