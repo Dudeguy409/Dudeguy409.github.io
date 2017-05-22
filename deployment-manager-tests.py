@@ -79,7 +79,7 @@ def call(command):
                                      shell=True, stderr=subprocess.STDOUT)
     print result
     return result
-  except subprocess.CalledProcessError as  e:
+  except subprocess.CalledProcessError as e:
     raise Exception(e.output)
     
 def replace_placeholder_in_file(search_for, replace_with, file):
