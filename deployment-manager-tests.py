@@ -142,19 +142,20 @@ def deploy(deployment_name, yaml_path):
 
 def parse_ips(deployment_name):
   """Creates a map of a deployment's GCE instances and associated IPs."""
-  instance_name_list = []
-  ip_map = {}
+  instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
                        + deployment_name + " --format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == "compute.v1.instance":
-      instance_name_list.append(resource["name"])
-  for name in instance_name_list:
+      raise Exception("This is your properties:"+resource["properties"])
+      #instance_map[resource["name"]] = zone
+  """for name in instance_name_list:
     ip_map[name] = call("gcloud compute instances describe "
                         + name+" --zone=" + default_zone
                         + " | grep \"networkIP\" | sed 's/networkIP: //'")
-  return ip_map
+  """
+  return instance_map
 
 
 def deploy_http_server(deployment_name, yaml_path):
