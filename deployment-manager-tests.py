@@ -302,27 +302,7 @@ class TestSimpleDeployment(object):
     # TODO figure out what values to use for the parameters
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties= "\\\"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\\\"")
     pass
-
-  def test_step_by_step_8_9_python(self):
-    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
-    create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-python")
-    parsed_instances = parse_instances("step-by-step-8-9-python")
-    for instance_name in parsed_instances:
-      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
-      pass
-    
-    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
-    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-python")
-    parsed_instances = parse_instances("step-by-step-8-9-python")
-    for instance_name in parsed_instances:
-      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone=us-central1-f" )
-      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
-
-    delete_deployment("step-by-step-8-9-python")
-    
+  
   def test_step_by_step_8_9_jinja(self):
     # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
     create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
@@ -342,10 +322,32 @@ class TestSimpleDeployment(object):
     # TODO assert that the contents are updated now
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone=us-central1-f" )
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name, port, ip)
 
     delete_deployment("step-by-step-8-9-jinja")
+
+  def test_step_by_step_8_9_python(self):
+    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
+    create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-python")
+    parsed_instances = parse_instances("step-by-step-8-9-python")
+    for instance_name in parsed_instances:
+      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      pass
+    
+    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
+    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-python")
+    parsed_instances = parse_instances("step-by-step-8-9-python")
+    for instance_name in parsed_instances:
+      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
+      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone="+parsed_instances[instance_name]["zone"] )
+      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+
+    delete_deployment("step-by-step-8-9-python")
+    
+
 
   
   def test_step_by_step_10_jinja(self):
