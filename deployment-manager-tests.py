@@ -37,6 +37,7 @@ configured project.
 import json
 import os
 import subprocess
+import yaml
 
 # The variables immediately below are used to create a new project in which to make test deployments, but only if the environment variable "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example instructions on GitHub to see what value to assign each variable:
 # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
@@ -140,7 +141,7 @@ def deploy(deployment_name, yaml_path):
   delete_deployment(deployment_name)
 
 
-def parse_ips(deployment_name):
+def parse_instances(deployment_name):
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
@@ -148,14 +149,13 @@ def parse_ips(deployment_name):
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == "compute.v1.instance":
-      raise Exception("This is your zone:"+((resource["properties"])["zone"]))
-      #raise Exception("This is your properties:"+resource["properties"])
-      #instance_map[resource["name"]] = zone
-  """for name in instance_name_list:
-    ip_map[name] = call("gcloud compute instances describe "
-                        + name+" --zone=" + default_zone
+      parsed_properties = yaml.load(resource["properties"])
+      zone = parsed_properties["zone"]
+      instance_map[resource["name"]] = {"zone" : zone}
+  for name in instance_map:
+    instance_map[name]["ip"] = call("gcloud compute instances describe "
+                        + name+" --zone=" + instance_map[name]["zone"]
                         + " | grep \"networkIP\" | sed 's/networkIP: //'")
-  """
   return instance_map
 
 
@@ -163,11 +163,11 @@ def deploy_http_server(deployment_name, yaml_path):
   """Tests deployments with GCE instances that host servers."""
   create_deployment(deployment_name, yaml_path)
   check_deployment(deployment_name)
-  parsed_instances = parse_ips(deployment_name)
-  for instance_name, ip in parsed_instances.iteritems():
+  parsed_instances = parse_instances(deployment_name)
+  for instance_name in parsed_instances:
     pass
     # TODO(davidsac) assert that the value is what is expected
-    # get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+    # get_instance_index_page(instance_name, default_ssh_tunnel_port, parsed_instances[instance_name]["ip"])
   delete_deployment(deployment_name)
 
 
