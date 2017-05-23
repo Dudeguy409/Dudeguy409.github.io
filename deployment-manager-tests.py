@@ -148,7 +148,8 @@ def parse_ips(deployment_name):
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == "compute.v1.instance":
-      raise Exception("This is your properties:"+resource["properties"])
+      raise Exception("This is your zone:"+((resource["properties"])["zone"]))
+      #raise Exception("This is your properties:"+resource["properties"])
       #instance_map[resource["name"]] = zone
   """for name in instance_name_list:
     ip_map[name] = call("gcloud compute instances describe "
