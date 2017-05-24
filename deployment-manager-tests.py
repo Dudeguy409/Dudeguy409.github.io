@@ -461,7 +461,7 @@ class TestSimpleDeployment(object):
   def test_image_based_igm_jinja(self):
     # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-jinja" 
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", "\\\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\\\"")
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", "\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\"")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
     
