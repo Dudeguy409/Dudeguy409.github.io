@@ -46,7 +46,6 @@ project_to_create = os.environ.get("DM_TEST_PROJECT_TO_CREATE")
 organization = os.environ.get("DM_TEST_ORGANIZATION_ID")
 service_account_a = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_A")
 service_account_b = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_B")
-service_account_c = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_C")
 billing_account = os.environ.get("DM_TEST_BILLING_ACCOUNT")
 account_to_create = os.environ.get("DM_TEST_SERVICE_ACCOUNT_TO_CREATE")
 
@@ -66,8 +65,7 @@ def setup_module():
          + "',BILLING_ACCOUNT:'" + billing_account
          + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create
          + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a
-         + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b
-         + "',SERVICE_ACCOUNT_OWNER_C:'" + service_account_c + "'\"")
+         + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\"")
 
 
 def teardown_module():
