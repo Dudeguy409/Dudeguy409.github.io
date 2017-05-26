@@ -113,7 +113,7 @@ def update_deployment(deployment_name, yaml_path):
       call(deployment_update_command)
       break
     except Exception as e:
-      if "412" in e.output:
+      if "412" in e.message:
         time.sleep(60)
       else:
         raise e        
