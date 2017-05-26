@@ -109,13 +109,16 @@ def update_deployment(deployment_name, yaml_path):
                                + deployment_name + " --config examples/v2/"
                                + yaml_path + " --project=" + project_name)
   print "Updating deployment of " + deployment_name + "..."
-  while True:
+  number_of attempts = 0
+  max_number_of_attempts = 3
+  while max_number_of_attempts > number_of_attempts:
     try:
       call(deployment_update_command)
       break
     except Exception as e:
       if "412" in e.message:
-        time.sleep(300)
+        time.sleep(600)
+        number_of_attempts += 1
       else:
         raise e        
   print "Deployment updated."
@@ -480,7 +483,6 @@ class TestSimpleDeployment(object):
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
 
-  @timed(1500)
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-jinja"
@@ -491,8 +493,7 @@ class TestSimpleDeployment(object):
     update_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
-    
-  @timed(1500)  
+     
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-python"
