@@ -103,7 +103,7 @@ def create_deployment(deployment_name, yaml_path, properties=None):
   print "Deployment created."
 
 
-def update_deployment(deployment_name, yaml_path):
+def update_and_check_deployment(deployment_name, yaml_path):
   """Attempts to update an existing deployment, raising any errors."""
   deployment_update_command = ("gcloud deployment-manager deployments update "
                                + deployment_name + " --config examples/v2/"
@@ -120,7 +120,18 @@ def update_deployment(deployment_name, yaml_path):
         time.sleep(600)
         number_of_attempts += 1
       else:
-        raise e        
+        raise e   
+  number_of_attempts = 0
+  while max_number_of_attempts > number_of_attempts:
+    try:
+      check_deployment(deployment_name)
+      break
+    except Exception as e:
+      if "412" in e.message:
+        time.sleep(600)
+        number_of_attempts += 1
+      else:
+        raise e   
   print "Deployment updated."
 
 
@@ -488,10 +499,8 @@ class TestSimpleDeployment(object):
     deployment_name = "igm-updater-jinja"
     create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_deployment(deployment_name, "igm-updater/jinja/frontendver2.yaml")
-    check_deployment(deployment_name)
-    update_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
-    check_deployment(deployment_name)
+    update_and_check_deployment(deployment_name, "igm-updater/jinja/frontendver2.yaml")
+    update_and_check_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
     delete_deployment(deployment_name)
      
   def test_igm_updater_python(self):
@@ -499,10 +508,8 @@ class TestSimpleDeployment(object):
     deployment_name = "igm-updater-python"
     create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_deployment(deployment_name, "igm-updater/python/frontendver2.yaml")
-    check_deployment(deployment_name)
-    update_deployment(deployment_name, "igm-updater/python/frontendver3.yaml")
-    check_deployment(deployment_name)
+    update_and_check_deployment(deployment_name, "igm-updater/python/frontendver2.yaml")
+    update_and_check_deployment(deployment_name, "igm-updater/python/frontendver3.yaml")
     delete_deployment(deployment_name)
     
   def test_internal_lb(self):
