@@ -115,7 +115,7 @@ def update_deployment(deployment_name, yaml_path):
       break
     except Exception as e:
       if "412" in e.message:
-        time.sleep(60)
+        time.sleep(300)
       else:
         raise e        
   print "Deployment updated."
@@ -480,7 +480,7 @@ class TestSimpleDeployment(object):
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
 
-  @timed(900)
+  @timed(1500)
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-jinja"
@@ -492,7 +492,7 @@ class TestSimpleDeployment(object):
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
     
-  @timed(900)  
+  @timed(1500)  
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-python"
