@@ -113,9 +113,9 @@ def update_deployment(deployment_name, yaml_path):
       break
     except Exception as e:
       if "412" in e.output:
-        raise e
-      else:
         time.sleep(60)
+      else:
+        raise e        
   print "Deployment updated."
 
 
