@@ -29,6 +29,7 @@ required:
 - SERVICE_ACCOUNT_OWNER_B
 
 properties:
+
   ORGANIZATION_ID:
     type: string
     description: TODO
