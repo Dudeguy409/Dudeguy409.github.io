@@ -107,7 +107,15 @@ def update_deployment(deployment_name, yaml_path):
                                + deployment_name + " --config examples/v2/"
                                + yaml_path + " --project=" + project_name)
   print "Updating deployment of " + deployment_name + "..."
-  call(deployment_update_command)
+  while True:
+    try:
+      call(deployment_update_command)
+      break
+    except Exception as e:
+      if "412" in e.output:
+        raise e
+      else:
+        time.sleep(60)
   print "Deployment updated."
 
 
@@ -469,7 +477,8 @@ class TestSimpleDeployment(object):
     create_deployment(deployment_name, "image_based_igm/image_based_igm.py", "\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\"")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
-    
+
+  @timed(900)
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-jinja"
@@ -481,6 +490,7 @@ class TestSimpleDeployment(object):
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
     
+  @timed(900)  
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
     deployment_name = "igm-updater-python"
