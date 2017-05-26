@@ -109,7 +109,7 @@ def update_deployment(deployment_name, yaml_path):
                                + deployment_name + " --config examples/v2/"
                                + yaml_path + " --project=" + project_name)
   print "Updating deployment of " + deployment_name + "..."
-  number_of attempts = 0
+  number_of_attempts = 0
   max_number_of_attempts = 3
   while max_number_of_attempts > number_of_attempts:
     try:
