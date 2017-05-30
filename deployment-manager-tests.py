@@ -281,12 +281,10 @@ class TestSimpleDeployment(object):
   """  
   
   def test_build_config_add_templates_jinja(self):
-    # TODO zone is us-central1-a
     deploy("build-config-add-templates-jinja",
            "build_configuration/add_templates/jinja/use_vm_template.yaml")
     
   def test_build_config_add_templates_python(self):
-    # TODO zone is us-central1-a
     deploy("build-config-add-templates-python",
            "build_configuration/add_templates/python/use_vm_template.yaml")  
   
@@ -305,7 +303,6 @@ class TestSimpleDeployment(object):
            "build_configuration/use_outputs/use_template_with_outputs.yaml")
     
   def test_build_config_explicit_dependencies(self):
-    # TODO zone is us-central1-a
     deploy("build-config-explicit-dependencies",
            "build_configuration/explicit_dependencies/backend_frontend_instances.yaml")
 
@@ -325,21 +322,17 @@ class TestSimpleDeployment(object):
     pass
   
   def test_step_by_step_8_9_jinja(self):
-    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
     create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-jinja")
     
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
-    # TODO consider getting rid of port once I get this working
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
       pass
     
-    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b.
     update_and_check_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
     
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
-    # TODO assert that the contents are updated now
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
       call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone="+parsed_instances[instance_name]["zone"])
@@ -348,7 +341,7 @@ class TestSimpleDeployment(object):
     delete_deployment("step-by-step-8-9-jinja")
 
   def test_step_by_step_8_9_python(self):
-    # TODO the zone that 8 is being created in is us-central1-f, not us-west1-b
+
     create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
     parsed_instances = parse_instances("step-by-step-8-9-python")
@@ -356,7 +349,6 @@ class TestSimpleDeployment(object):
       # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
       pass
     
-    # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
     update_and_check_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
     
     parsed_instances = parse_instances("step-by-step-8-9-python")
@@ -447,19 +439,15 @@ class TestSimpleDeployment(object):
     delete_deployment(deployment_name)
     
   def test_vm_with_disks_jinja(self):
-    # TODO zone is us-central1-a
     deploy("vm-with-disks-jinja", "vm_with_disks/jinja/vm_with_disks.yaml")
     
   def test_vm_with_disks_python(self):
-    # TODO zone is us-central1-a
     deploy("vm-with-disks-python", "vm_with_disks/python/vm_with_disks.yaml")
     
   def test_container_igm_jinja(self):
-    # TODO zone is us-central1-f
     deploy("container-igm-jinja","container_igm/jinja/container_igm.yaml")
     
   def test_container_igm_python(self):
-    # TODO zone is us-central1-f
     deploy("container-igm-python","container_igm/python/container_igm.yaml")
     
   def test_iam(self):
