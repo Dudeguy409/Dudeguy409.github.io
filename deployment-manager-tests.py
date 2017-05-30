@@ -72,8 +72,9 @@ def setup_module():
 
 def teardown_module():
   if create_new_project:
-    call("gcloud deployment-manager deployments delete "
+    result = call("gcloud deployment-manager deployments delete "
          + project_deployment_name + " -q")
+    raise Exception(result)
 
 
 def call(command):
