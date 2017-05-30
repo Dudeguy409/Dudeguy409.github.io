@@ -39,7 +39,6 @@ import os
 import subprocess
 import yaml
 import time
-from nose.tools import timed
 
 # The variables immediately below are used to create a new project in which to make test deployments, but only if the environment variable "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example instructions on GitHub to see what value to assign each variable:
 # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
