@@ -421,8 +421,8 @@ class TestSimpleDeployment(object):
     create_deployment(deployment_name, "nodejs_l7/jinja/application.yaml")
     check_deployment(deployment_name)
     # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
-    call("gcloud compute instance-groups unmanaged set-named-ports frontend-" + deployment_name + "-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
-    call("gcloud compute instance-groups unmanaged set-named-ports frontend-" + deployment_name + "-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
     call("gcloud compute forwarding-rules list | grep application-" + deployment_name + "-l7lb")
     delete_deployment(deployment_name)
  
@@ -434,8 +434,8 @@ class TestSimpleDeployment(object):
     create_deployment(deployment_name, "nodejs_l7/python/application.yaml")
     check_deployment(deployment_name)
     # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
-    call("gcloud compute instance-groups unmanaged set-named-ports frontend-" + deployment_name + "-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
-    call("gcloud compute instance-groups unmanaged set-named-ports frontend-" + deployment_name + "-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
     call("gcloud compute forwarding-rules list | grep application-" + deployment_name + "-l7lb")
     delete_deployment(deployment_name)
     
