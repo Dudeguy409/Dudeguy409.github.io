@@ -337,8 +337,7 @@ class TestSimpleDeployment(object):
       pass
     
     # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b.
-    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-jinja")
+    update_and_check_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
     
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
     # TODO assert that the contents are updated now
@@ -359,8 +358,8 @@ class TestSimpleDeployment(object):
       pass
     
     # TODO the zone that 8 is being created in is still us-central1-f, not us-west1-b
-    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-python")
+    update_and_check_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    
     parsed_instances = parse_instances("step-by-step-8-9-python")
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
