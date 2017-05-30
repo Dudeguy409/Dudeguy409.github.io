@@ -82,7 +82,6 @@ def call(command):
   try:
     result = subprocess.check_output(command,
                                      shell=True, stderr=subprocess.STDOUT)
-    print result
     return result
   except subprocess.CalledProcessError as e:
     raise Exception(e.output)
