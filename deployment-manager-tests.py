@@ -425,6 +425,8 @@ class TestSimpleDeployment(object):
     forwarding_rule = call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
+    else:
+      print forwarding_rule
     delete_deployment(deployment_name)
 
   def test_nodejs_l7_python(self):
@@ -440,6 +442,8 @@ class TestSimpleDeployment(object):
     forwarding_rule = call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
+    else:
+      print forwarding_rule
     delete_deployment(deployment_name)
     
   def test_vm_with_disks_jinja(self):
