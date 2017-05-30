@@ -422,7 +422,7 @@ class TestSimpleDeployment(object):
     # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
     call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
     call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
-    raise Exception( call("gcloud compute forwarding-rules list | grep application-" + deployment_name + "-l7lb"))
+    raise Exception( call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb"))
     delete_deployment(deployment_name)
 
   def test_nodejs_l7_python(self):
@@ -435,7 +435,7 @@ class TestSimpleDeployment(object):
     # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
     call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
     call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
-    raise Exception( call("gcloud compute forwarding-rules list | grep application-" + deployment_name + "-l7lb"))
+    call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb")
     delete_deployment(deployment_name)
     
   def test_vm_with_disks_jinja(self):
