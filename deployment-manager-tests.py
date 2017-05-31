@@ -195,7 +195,7 @@ def deploy_http_server(deployment_name, yaml_path):
 def get_instance_index_page(instance_name, local_port, ip):
   # TODO fix
   call("gcloud compute ssh user@" + instance_name + " --zone " + default_zone
-       + " -- -N -L " + str(port).strip() + ":" + str(ip).strip() + ":8080")
+       + " -- -N -L " + str(local_port).strip() + ":" + str(ip).strip() + ":8080")
   return call("curl http://localhost:"+str(local_port))
 
 
