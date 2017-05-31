@@ -567,7 +567,7 @@ class TestSimpleDeployment(object):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-jinja"
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja",
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", properties=
                       "\"targetSize:3,zone:" + default_zone
                       + ",maxReplicas:5\"")
     check_deployment(deployment_name)
@@ -577,7 +577,7 @@ class TestSimpleDeployment(object):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-python"
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.py",
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.py", properties=
                       "\"targetSize:3,zone:" + default_zone
                       + ",maxReplicas:5\"")
     check_deployment(deployment_name)
