@@ -52,7 +52,7 @@ class TestSimpleDeployment(object):
     deployment_delete_command = ("gcloud deployment-manager deployments delete "
                                + "step-by-step-5-python" + " -q --project="
                                + project_name)
-    p1 = subprocess.popen(deployment_delete_command)
+    p1 = subprocess.Popen(deployment_delete_command)
     output, error = p1.communicate()
     print p1.returncode
     print output
