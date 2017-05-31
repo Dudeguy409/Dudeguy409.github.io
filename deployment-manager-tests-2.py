@@ -39,7 +39,7 @@ def call(command):
 
 def delete_deployment(deployment_name):
   deployment_delete_command = ("gcloud deployment-manager deployments delete "
-                               + deployment_name + " -q --project="
+                               + deployment_name + " --project="
                                + project_name)
   print "Deleting deployment of " + deployment_name + "..."
   print call(deployment_delete_command)
