@@ -22,7 +22,7 @@ and you have installed the nose python testing framework.  To run this test from
 the command line, try:
 nosetests -v -s deployment-manager-tests.py
 In order to create a temporary project in which to create and delete these test
-deployments, follow the instrictions in the project creation github example:
+deployments, follow the instructions in the project creation github example:
 https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
 Then, before running the tests, set the environment variables for your specific
 project.  If "DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT" is set to "TRUE", the
@@ -36,6 +36,7 @@ import subprocess
 import time
 import yaml
 
+# TODO(davidsac) Consider removing the description here or above
 # The variables immediately below are used to create a new project in which to
 # make test deployments, but only if the environment variable
 # "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example
@@ -70,8 +71,7 @@ def setup_module():
 
 def teardown_module():
   if create_new_project:
-    call("gcloud deployment-manager deployments delete "
-         + project_deployment_name + " -q")
+    delete_deployment(project_deployment_name, host_project)
 
 
 def call(command):
@@ -146,10 +146,10 @@ def check_deployment(deployment_name):
                     + raw_deployment + "---END DESCRIPTION---")
 
 
-def delete_deployment(deployment_name):
+def delete_deployment(deployment_name, project=project_name):
   deployment_delete_command = ("gcloud deployment-manager deployments delete "
                                + deployment_name + " -q --project="
-                               + project_name)
+                               + project)
   print "Deleting deployment of " + deployment_name + "..."
   call(deployment_delete_command)
   print "Deployment deleted."
