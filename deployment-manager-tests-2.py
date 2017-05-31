@@ -42,7 +42,7 @@ def delete_deployment(deployment_name):
                                + deployment_name + " -q --project="
                                + project_name)
   print "Deleting deployment of " + deployment_name + "..."
-  call(deployment_delete_command)
+  print call(deployment_delete_command)
   print "Deployment deleted."
 
 class TestSimpleDeployment(object):
