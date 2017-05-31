@@ -59,14 +59,8 @@ default_ssh_tunnel_port = 8890
 
 def setup_module():
   if create_new_project:
-    call("gcloud deployment-manager deployments create "
-         + project_deployment_name
-         + " --config config-template.jinja --properties \"PROJECT_NAME:'"
-         + project_to_create + "',ORGANIZATION_ID:'" + organization
-         + "',BILLING_ACCOUNT:'" + billing_account
-         + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create
-         + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a
-         + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\"")
+    properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
+    create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
 
 
 def teardown_module():
@@ -87,14 +81,14 @@ def call(command):
 
 def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
   call("sed -i.backup 's/" + search_for + "/" + replace_with
-       + "/' examples/v2/" + file_to_modify)
+       + "/' " + file_to_modify)
 
 
-def create_deployment(deployment_name, yaml_path, properties=None):
+def create_deployment(deployment_name, config_path, project=project_name, properties=None):
   """Attempts to create a deployment, raising any errors."""
   deployment_create_command = ("gcloud deployment-manager deployments create "
-                               + deployment_name + " --config examples/v2/"
-                               + yaml_path + " --project=" + project_name)
+                               + deployment_name + " --config "
+                               + config_path + " --project=" + project)
   if properties:
     deployment_create_command += " --properties " + properties
   print "Creating deployment of " + deployment_name + "..."
