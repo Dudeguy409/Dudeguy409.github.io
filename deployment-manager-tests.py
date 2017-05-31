@@ -20,14 +20,10 @@ in the uderlying APIs that the examples use.  This program can be run locally on
 your machine as long as your Google Cloud SDK has been installed and configured,
 and you have installed the nose python testing framework.  To run this test from
 the command line, try:
-
 nosetests -v -s deployment-manager-tests.py
-
 In order to create a temporary project in which to create and delete these test
 deployments, follow the instrictions in the project creation github example:
-
 https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
-
 Then, before running the tests, set the environment variables for your specific
 project.  If "DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT" is set to "TRUE", the
 tests will be run in a new project.  If not, they will be run in your default
@@ -37,10 +33,13 @@ configured project.
 import json
 import os
 import subprocess
-import yaml
 import time
+import yaml
 
-# The variables immediately below are used to create a new project in which to make test deployments, but only if the environment variable "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example instructions on GitHub to see what value to assign each variable:
+# The variables immediately below are used to create a new project in which to
+# make test deployments, but only if the environment variable
+# "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example
+# instructions on GitHub to see what value to assign each variable:
 # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
 project_deployment_name = os.environ.get("DM_TEST_DEPLOYMENT_NAME")
 project_to_create = os.environ.get("DM_TEST_PROJECT_TO_CREATE")
@@ -71,9 +70,8 @@ def setup_module():
 
 def teardown_module():
   if create_new_project:
-    result = call("gcloud deployment-manager deployments delete "
+    call("gcloud deployment-manager deployments delete "
          + project_deployment_name + " -q")
-    raise Exception(result)
 
 
 def call(command):
@@ -85,10 +83,12 @@ def call(command):
     return result
   except subprocess.CalledProcessError as e:
     raise Exception(e.output)
-    
-def replace_placeholder_in_file(search_for, replace_with, file):
-  # FIXME(davidsac): Host this test file in the testing folder of the repo, and update these tests to copy over the example folder and make changes and deployments with it.
-  call("sed -i.backup 's/" + search_for + "/" + replace_with + "/' examples/v2/" + file)
+
+
+def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
+  call("sed -i.backup 's/" + search_for + "/" + replace_with
+       + "/' examples/v2/" + file_to_modify)
+
 
 def create_deployment(deployment_name, yaml_path, properties=None):
   """Attempts to create a deployment, raising any errors."""
@@ -119,7 +119,7 @@ def update_and_check_deployment(deployment_name, yaml_path):
         time.sleep(600)
         number_of_attempts += 1
       else:
-        raise e   
+        raise e
   number_of_attempts = 0
   while max_number_of_attempts > number_of_attempts:
     try:
@@ -130,7 +130,7 @@ def update_and_check_deployment(deployment_name, yaml_path):
         time.sleep(600)
         number_of_attempts += 1
       else:
-        raise e   
+        raise e
   print "Deployment updated."
 
 
@@ -172,11 +172,13 @@ def parse_instances(deployment_name):
     if resource["type"] == "compute.v1.instance":
       parsed_properties = yaml.load(resource["properties"])
       zone = parsed_properties["zone"]
-      instance_map[resource["name"]] = {"zone" : zone}
+      instance_map[resource["name"]] = {"zone": zone}
   for name in instance_map:
     instance_map[name]["ip"] = call("gcloud compute instances describe "
-                        + name+" --zone=" + instance_map[name]["zone"]
-                        + " | grep \"networkIP\" | sed 's/networkIP: //'")
+                                    + name + " --zone="
+                                    + instance_map[name]["zone"]
+                                    + " | grep \"networkIP\""
+                                    " | sed 's/networkIP: //'")
   return instance_map
 
 
@@ -186,17 +188,19 @@ def deploy_http_server(deployment_name, yaml_path):
   check_deployment(deployment_name)
   parsed_instances = parse_instances(deployment_name)
   for instance_name in parsed_instances:
-    pass
+    page = get_instance_index_page(instance_name, default_ssh_tunnel_port,
+                                   parsed_instances[instance_name]["ip"])
     # TODO(davidsac) assert that the value is what is expected
-    # get_instance_index_page(instance_name, default_ssh_tunnel_port, parsed_instances[instance_name]["ip"])
   delete_deployment(deployment_name)
 
 
 def get_instance_index_page(instance_name, local_port, ip):
-  # TODO fix
-  call("gcloud compute ssh user@" + instance_name + " --zone " + default_zone
-       + " -- -N -L " + str(local_port).strip() + ":" + str(ip).strip() + ":8080")
-  return call("curl http://localhost:"+str(local_port))
+  # TODO(davidsac) get this working
+  """ call("gcloud compute ssh user@" + instance_name + " --zone "
+          + default_zone + " -- -N -L " + str(local_port).strip() + ":"
+          + str(ip).strip() + ":8080")
+  """
+  return call("curl http://localhost:" + str(local_port))
 
 
 class TestSimpleDeployment(object):
@@ -216,50 +220,80 @@ class TestSimpleDeployment(object):
            "build_configuration/vm_and_bigquery.yaml")
 
   def test_ssl(self):
-    # TODO should we interact with the deployment to make sure that it works?  Or is the simple warning-free deployment of an SSL certificate enough?
+    """ TODO(davidsac) should we interact with the deployment to make
+    sure that it works?  Or is the simple warning-free deployment of an SSL
+    certificate enough?
+    """
     deploy("ssl", "ssl/ssl.yaml")
 
   def test_waiter(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "waiter/config.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "waiter/config.yaml")
     deploy("waiter", "waiter/config.yaml")
 
   def test_quick_start(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "quick_start/vm.yaml")
-    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8", "quick_start/vm.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "quick_start/vm.yaml")
+    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8",
+                                "quick_start/vm.yaml")
     deploy("quick-start", "quick_start/vm.yaml")
 
   def test_step_by_step_2(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step2_create_a_configuration/two-vms.yaml")
     deploy("step-by-step-2",
            "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
 
   def test_step_by_step_4(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step4_use_references/two-vms.yaml")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step4_use_references/two-vms.yaml")
     deploy("step-by-step-4",
            "step_by_step_guide/step4_use_references/two-vms.yaml")
 
   def test_step_by_step_5_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/python/vm-template-2.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide""/step5_create_a_template"
+                                "/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/python/vm-template-2.py")
     deploy("step-by-step-5-python",
            "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
 
   def test_step_by_step_5_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/jinja/vm-template-2.jinja")
     deploy("step-by-step-5-jinja",
            "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
 
   def test_step_by_step_6_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/python/vm-template-2.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/python/vm-template-2.py")
     deploy("step-by-step-6-python",
            "step_by_step_guide/step6_use_multiple_templates"
            "/python/config-with-many-templates.yaml")
 
   def test_step_by_step_6_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name, "step_by_step_guide/step6_use_multiple_templates/jinja/vm-template-2.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/jinja/vm-template-2.jinja")
     deploy("step-by-step-6-jinja",
            "step_by_step_guide/step6_use_multiple_templates"
            "/jinja/config-with-many-templates.yaml")
@@ -273,148 +307,189 @@ class TestSimpleDeployment(object):
     deploy("step-by-step-7-jinja",
            "step_by_step_guide/step7_use_environment_variables"
            "/jinja/config-with-many-templates.yaml")
-  """
-  
-  
-  
-  
-  """  
-  
+
   def test_build_config_add_templates_jinja(self):
     deploy("build-config-add-templates-jinja",
            "build_configuration/add_templates/jinja/use_vm_template.yaml")
-    
+
   def test_build_config_add_templates_python(self):
     deploy("build-config-add-templates-python",
-           "build_configuration/add_templates/python/use_vm_template.yaml")  
-  
+           "build_configuration/add_templates/python/use_vm_template.yaml")
+
   def test_single_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "single_vm/jinja/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "single_vm/jinja/vm.yaml")
     deploy("single-vm",
            "single_vm/jinja/vm.yaml")
-    
+
   def test_single_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "single_vm/python/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "single_vm/python/vm.yaml")
     deploy("single-vm",
            "single_vm/python/vm.yaml")
-    
+
   def test_build_config_use_outputs(self):
     deploy("build-config-use-outputs",
            "build_configuration/use_outputs/use_template_with_outputs.yaml")
-    
+
   def test_build_config_explicit_dependencies(self):
     deploy("build-config-explicit-dependencies",
-           "build_configuration/explicit_dependencies/backend_frontend_instances.yaml")
+           "build_configuration/explicit_dependencies"
+           "/backend_frontend_instances.yaml")
 
   def test_vm_startup_script_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "vm_startup_script/python/vm.yaml")
-    deploy_http_server("vm-startup-script-python", "vm_startup_script/python/vm.yaml")
-    
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "vm_startup_script/python/vm.yaml")
+    deploy_http_server("vm-startup-script-python",
+                       "vm_startup_script/python/vm.yaml")
+
   def test_vm_startup_script_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "vm_startup_script/jinja/vm.yaml")
-    deploy_http_server("vm-startup-script-jinja", "vm_startup_script/jinja/vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "vm_startup_script/jinja/vm.yaml")
+    deploy_http_server("vm-startup-script-jinja",
+                       "vm_startup_script/jinja/vm.yaml")
 
   def test_vpn_auto_subnet(self):
-    # TODO we could probably hack the traditional deploy method to work with this by adding a properties parameter
-    #TODO How are we going to test this with the firewall?
-    # TODO figure out what values to use for the parameters
-    # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties= "\\\"peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE\\\"")
+    # TODO(davidsac) How are we going to test this with the firewall?
+    # TODO(davidsac) figure out what values to use for the parameters
+    # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
+    #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-  
+
   def test_step_by_step_8_9_jinja(self):
-    create_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step8_metadata_and_startup_scripts/jinja/config-with-many-templates.yaml")
+    create_deployment("step-by-step-8-9-jinja",
+                      "step_by_step_guide/step8_metadata_and_startup_scripts"
+                      "/jinja/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-jinja")
-    
+
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
     for instance_name in parsed_instances:
-      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      # rslt = get_instance_index_page(instance_name,
+      #                                default_ssh_tunnel_port, ip)
       pass
-    
-    update_and_check_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    
+
+    update_and_check_deployment("step-by-step-8-9-jinja",
+                                "step_by_step_guide/step9_update_a_deployment"
+                                "/jinja/config-with-many-templates.yaml")
+
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
     for instance_name in parsed_instances:
-      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone="+parsed_instances[instance_name]["zone"])
+      # Reset the instance before testing the server again.
+      # Note that the instances are in us-central1-f.
+      call("gcloud compute instances reset " + instance_name + " --project="
+           + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name, port, ip)
 
     delete_deployment("step-by-step-8-9-jinja")
 
   def test_step_by_step_8_9_python(self):
 
-    create_deployment("step-by-step-8-9-python", "step_by_step_guide/step8_metadata_and_startup_scripts/python/config-with-many-templates.yaml")
+    create_deployment("step-by-step-8-9-python",
+                      "step_by_step_guide/step8_metadata_and_startup_scripts"
+                      "/python/config-with-many-templates.yaml")
     check_deployment("step-by-step-8-9-python")
     parsed_instances = parse_instances("step-by-step-8-9-python")
     for instance_name in parsed_instances:
-      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      # rslt = get_instance_index_page(instance_name,
+      #                                default_ssh_tunnel_port, ip)
       pass
-    
-    update_and_check_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    
+
+    update_and_check_deployment("step-by-step-8-9-python",
+                                "step_by_step_guide/step9_update_a_deployment"
+                                "/python/config-with-many-templates.yaml")
+
     parsed_instances = parse_instances("step-by-step-8-9-python")
     for instance_name in parsed_instances:
-      # Reset the instance before testing the server again.  Note that the instances are in us-central1-f.
-      call("gcloud compute instances reset " + instance_name + " --project=" + project_name + " --zone="+parsed_instances[instance_name]["zone"] )
-      # rslt = get_instance_index_page(instance_name, default_ssh_tunnel_port, ip)
+      # Reset the instance before testing the server again.
+      # Note that the instances are in us-central1-f.
+      call("gcloud compute instances reset " + instance_name + " --project="
+           + project_name + " --zone="+parsed_instances[instance_name]["zone"])
+      # rslt = get_instance_index_page(instance_name,
+      #                                default_ssh_tunnel_port, ip)
 
     delete_deployment("step-by-step-8-9-python")
-    
 
-
-  
   def test_step_by_step_10_jinja(self):
-    #self.create("step-by-step-10-jinja", "step_by_step_guide/step10_use_python_templates/jinja/use-jinja-template-with-modules.yaml")
-    # TODO when I have time, read through this example and make sure my test will deploy it correctly
+    """ self.create("step-by-step-10-jinja",
+                "step_by_step_guide/step10_use_python_templates"
+                "/jinja/use-jinja-template-with-modules.yaml")
+    """
+    """ TODO(davidsac) when I have time, read through this
+    example and make sure my test will deploy it correctly
+    """
     pass
-    
+
   def test_step_by_step_10_python(self):
-    # self.create("step-by-step-10-python", "step_by_step_guide/step10_use_python_templates/python/use-python-template-with-modules.yaml")
-    # TODO when I have time, read through this example and make sure my test will deploy it correctly
+    """ self.create("step-by-step-10-python",
+    "step_by_step_guide/step10_use_python_templates"
+    "/python/use-python-template-with-modules.yaml")
+    """
+    """ TODO(davidsac) when I have time, read through this
+    example and make sure my test will deploy it correctly
+    """
     pass
-    
+
   def test_common_jinja(self):
-    #TODO do I need to add tests for these?  It doesn't seem like there are any deploymets here, just utility files for other deployments
+    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
+    # there are any deploymets here, just utility files for other deployments
     pass
-    
+
   def test_common_python(self):
-    #TODO do I need to add tests for these?  It doesn't seem like there are any deploymets here, just utility files for other deployments
+    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
+    # there are any deploymets here, just utility files for other deployments
     pass
-  
+
   def test_container_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/jinja/container_vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "container_vm/jinja/container_vm.yaml")
     deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
     # TODO(davidsac) ensure after deployment that this deployed correctly
-    
+
   def test_container_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "container_vm/python/container_vm.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "container_vm/python/container_vm.yaml")
     deploy("container-vm-python", "container_vm/python/container_vm.yaml")
     # TODO(davidsac) ensure after deployment that this deployed correctly
-    
+
   def test_nodejs_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs/jinja/nodejs.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs/jinja/nodejs.yaml")
     deploy("nodejs-jinja", "nodejs/jinja/nodejs.yaml")
     # TODO(davidsac) ensure after deployment that this deployed correctly
-    
+
   def test_nodejs_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs/python/nodejs.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs/python/nodejs.yaml")
     deploy("nodejs-python", "nodejs/python/nodejs.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly  
-    
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
   def test_regional_igm(self):
     deploy("regional-igm", "regional_igm/regional_igm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly  
-    
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
   def test_nodejs_l7_jinja(self):
+    """Tests that the jinja NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
-    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone, "nodejs_l7/jinja/application.yaml")
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/jinja/application.yaml")
+    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone,
+                                "nodejs_l7/jinja/application.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs_l7/jinja/application.yaml")
     deployment_name = "nodejs-l7-jinja"
     create_deployment(deployment_name, "nodejs_l7/jinja/application.yaml")
     check_deployment(deployment_name)
-    # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
-    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
-    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
-    forwarding_rule = call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb")
+    # TODO(davidsac) all the steps specifically mentioned in the readme
+    # are performed, but perhaps there are still more things to be done
+    # to check that it works?
+    call("gcloud compute instance-groups unmanaged set-named-ports "
+         + deployment_name
+         + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone "
+         + default_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports "
+         + deployment_name
+         + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
+         + secondary_zone)
+    forwarding_rule = call("gcloud compute forwarding-rules list | grep "
+                           + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
     else:
@@ -422,106 +497,146 @@ class TestSimpleDeployment(object):
     delete_deployment(deployment_name)
 
   def test_nodejs_l7_python(self):
+    """Tests that the python NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
-    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone, "nodejs_l7/python/application.yaml")
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "nodejs_l7/python/application.yaml")
+    replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone,
+                                "nodejs_l7/python/application.yaml")
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs_l7/python/application.yaml")
     deployment_name = "nodejs-l7-python"
     create_deployment(deployment_name, "nodejs_l7/python/application.yaml")
     check_deployment(deployment_name)
-    # TODO all the steps specifically mentioned in the readme are performed, but perhaps there are still more things to be done to check that it works?
-    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone " + default_zone)
-    call("gcloud compute instance-groups unmanaged set-named-ports " + deployment_name + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone " + secondary_zone)
-    forwarding_rule = call("gcloud compute forwarding-rules list | grep " + deployment_name + "-application-l7lb")
+    # TODO(davidsac) all the steps specifically mentioned in the readme
+    # are performed, but perhaps there are still more things to be done
+    # to check that it works?
+    call("gcloud compute instance-groups unmanaged set-named-ports "
+         + deployment_name
+         + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone "
+         + default_zone)
+    call("gcloud compute instance-groups unmanaged set-named-ports "
+         + deployment_name
+         + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
+         + secondary_zone)
+    forwarding_rule = call("gcloud compute forwarding-rules list | grep "
+                           + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
     else:
       print forwarding_rule
     delete_deployment(deployment_name)
-    
+
   def test_vm_with_disks_jinja(self):
     deploy("vm-with-disks-jinja", "vm_with_disks/jinja/vm_with_disks.yaml")
-    
+
   def test_vm_with_disks_python(self):
     deploy("vm-with-disks-python", "vm_with_disks/python/vm_with_disks.yaml")
-    
+
   def test_container_igm_jinja(self):
-    deploy("container-igm-jinja","container_igm/jinja/container_igm.yaml")
-    
+    deploy("container-igm-jinja",
+           "container_igm/jinja/container_igm.yaml")
+
   def test_container_igm_python(self):
-    deploy("container-igm-python","container_igm/python/container_igm.yaml")
-    
+    deploy("container-igm-python",
+           "container_igm/python/container_igm.yaml")
+
   def test_iam(self):
     deploy("iam", "iam/jinja/accessible_resource.yaml")
-    # TODO make sure that this is actually deploying correctly
-    
+    # TODO(davidsac) make sure that this is actually deploying correctly
+
   def test_htcondor(self):
-    # TODO read the tutorial and figure out how to deploy this
+    # TODO(davidsac) read the tutorial and figure out how to deploy this
     pass
-  
+
   def test_metadata_from_file_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "metadata_from_file/jinja/config.yaml")
-    deploy_http_server("metadata-from-file-jinja", "metadata_from_file/jinja/config.yaml")
-    
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "metadata_from_file/jinja/config.yaml")
+    deploy_http_server("metadata-from-file-jinja",
+                       "metadata_from_file/jinja/config.yaml")
+
   def test_metadata_from_file_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "metadata_from_file/python/config.yaml")
-    deploy_http_server("metadata-from-file-python", "metadata_from_file/python/config.yaml")
-    
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "metadata_from_file/python/config.yaml")
+    deploy_http_server("metadata-from-file-python",
+                       "metadata_from_file/python/config.yaml")
+
   def test_instance_pool_jinja(self):
     deploy("instance-pool-jinja", "instance_pool/jinja/instance-pool.yaml")
-    # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
-    
+    # TODO(davidsac) is there anything else that needs to be checked?
+    # The number of instances created, for example?  Or maybe interconnectivity?
+
   def test_instance_pool_python(self):
     deploy("instance-pool-python", "instance_pool/python/instance-pool.yaml")
-    # TODO(davidsac) is there anything else that needs to be checked?  The number of instances created, for example?  Or maybe interconnectivity?
-    
+    # TODO(davidsac) is there anything else that needs to be checked?
+    # The number of instances created, for example?  Or maybe interconnectivity?
+
   def test_image_based_igm_jinja(self):
-    # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
-    deployment_name = "image-based-igm-jinja" 
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", "\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\"")
+    # TODO(davidsac) this deployment has some more complex features like an
+    # IGM and Autoscaler that may need to be tested more thoroughly
+    deployment_name = "image-based-igm-jinja"
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja",
+                      "\"targetSize:3,zone:" + default_zone
+                      + ",maxReplicas:5\"")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
-    
+
   def test_image_based_igm_python(self):
-    # TODO this deployment has some more complex features like an IGM and Autoscaler that may need to be tested more thoroughly
+    # TODO(davidsac) this deployment has some more complex features like an
+    # IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-python"
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.py", "\"targetSize:3,zone:" + default_zone + ",maxReplicas:5\"")
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.py",
+                      "\"targetSize:3,zone:" + default_zone
+                      + ",maxReplicas:5\"")
     check_deployment(deployment_name)
     delete_deployment(deployment_name)
 
   def test_igm_updater_jinja(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
     deployment_name = "igm-updater-jinja"
     create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_and_check_deployment(deployment_name, "igm-updater/jinja/frontendver2.yaml")
-    update_and_check_deployment(deployment_name, "igm-updater/jinja/frontendver3.yaml")
+    update_and_check_deployment(deployment_name,
+                                "igm-updater/jinja/frontendver2.yaml")
+    update_and_check_deployment(deployment_name,
+                                "igm-updater/jinja/frontendver3.yaml")
     delete_deployment(deployment_name)
-     
+
   def test_igm_updater_python(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
     deployment_name = "igm-updater-python"
     create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_and_check_deployment(deployment_name, "igm-updater/python/frontendver2.yaml")
-    update_and_check_deployment(deployment_name, "igm-updater/python/frontendver3.yaml")
+    update_and_check_deployment(deployment_name,
+                                "igm-updater/python/frontendver2.yaml")
+    update_and_check_deployment(deployment_name,
+                                "igm-updater/python/frontendver3.yaml")
     delete_deployment(deployment_name)
-    
+
   def test_internal_lb(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
     deploy("internal-lb", "internal_lb/python/config.yaml")
-    
+
   def test_internal_lb_haproxy_jinja(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/jinja/config.yaml")
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "internal_lb_haproxy/jinja/config.yaml")
     deploy("int-lb-hap-j", "internal_lb_haproxy/jinja/config.yaml")
-    
-  # TODO(davidsac): There are two copies of the python files it seems.  Which ones are the most up-to-date?  
+
+  # TODO(davidsac): There are two copies of the python files it seems.
+  # Which ones are the most up-to-date?
   def test_internal_lb_haproxy_python_a(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/python/config.yaml")
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "internal_lb_haproxy/python/config.yaml")
     deploy("int-lb-hap-p-a", "internal_lb_haproxy/python/config.yaml")
-  
+
   def test_internal_lb_haproxy_python_b(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary to more thoroughly check that it works
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone, "internal_lb_haproxy/config.yaml")
+    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
+    # to more thoroughly check that it works
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "internal_lb_haproxy/config.yaml")
     deploy("int-lb-hap-p-b", "internal_lb_haproxy/config.yaml")
