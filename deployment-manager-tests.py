@@ -162,14 +162,14 @@ def deploy(deployment_name, yaml_path):
   delete_deployment(deployment_name)
 
 
-def parse_instances(deployment_name):
+def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance"):
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
                        + deployment_name + " --format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
-    if resource["type"] == "compute.v1.instance":
+    if resource["type"] == resource_type_to_parse:
       parsed_properties = yaml.load(resource["properties"])
       zone = parsed_properties["zone"]
       instance_map[resource["name"]] = {"zone": zone}
