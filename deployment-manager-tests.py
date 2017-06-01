@@ -96,11 +96,11 @@ def create_deployment(deployment_name, config_path, project=project_name, proper
   print "Deployment created."
 
 
-def update_and_check_deployment(deployment_name, yaml_path):
+def update_and_check_deployment(deployment_name, config_path):
   """Attempts to update an existing deployment, raising any errors."""
   deployment_update_command = ("gcloud deployment-manager deployments update "
                                + deployment_name + " --config examples/v2/"
-                               + yaml_path + " --project=" + project_name)
+                               + config_path + " --project=" + project_name)
   print "Updating deployment of " + deployment_name + "..."
   number_of_attempts = 0
   max_number_of_attempts = 3
@@ -149,9 +149,9 @@ def delete_deployment(deployment_name, project=project_name):
   print "Deployment deleted."
 
 
-def deploy(deployment_name, yaml_path):
+def deploy(deployment_name, config_path):
   """Attempts to create and delete a deployment, raising any errors."""
-  create_deployment(deployment_name, yaml_path)
+  create_deployment(deployment_name, config_path)
   check_deployment(deployment_name)
   delete_deployment(deployment_name)
 
