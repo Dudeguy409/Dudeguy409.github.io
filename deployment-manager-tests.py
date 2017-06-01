@@ -176,9 +176,9 @@ def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance
   return instance_map
 
 
-def deploy_http_server(deployment_name, yaml_path):
+def deploy_http_server(deployment_name, config_path):
   """Tests deployments with GCE instances that host servers."""
-  create_deployment(deployment_name, yaml_path)
+  create_deployment(deployment_name, config_path)
   check_deployment(deployment_name)
   parsed_instances = parse_instances(deployment_name)
   for instance_name in parsed_instances:
