@@ -612,13 +612,6 @@ class TestSimpleDeployment(object):
     # to more thoroughly check that it works
     deploy("internal-lb", "internal_lb/python/config.yaml")
 
-  def test_internal_lb_haproxy_jinja(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
-    # to more thoroughly check that it works
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "internal_lb_haproxy/jinja/config.yaml")
-    deploy("int-lb-hap-j", "internal_lb_haproxy/jinja/config.yaml")
-
   # TODO(davidsac): There are two copies of the python files it seems.
   # Which ones are the most up-to-date?
   def test_internal_lb_haproxy_python_a(self):
