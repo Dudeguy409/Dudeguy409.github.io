@@ -1,36 +1,36 @@
 - - build-config-vm
-  - build_configuration/vm.yaml
+  - config-path: build_configuration/vm.yaml
 - - build-config-vm-and-bigquery
-  - build_configuration/vm_and_bigquery.yaml
+  - config-path: build_configuration/vm_and_bigquery.yaml
 - - step-by-step-7-python
-  - step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml
+  - config-path: step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml
 - - step-by-step-7-jinja
-  - step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml
+  - config-path: step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml
 - - build-config-add-templates-jinja
-  - build_configuration/add_templates/jinja/use_vm_template.yaml
+  - config-path: build_configuration/add_templates/jinja/use_vm_template.yaml
 - - build-config-add-templates-python
-  - build_configuration/add_templates/python/use_vm_template.yaml
+  - config-path: build_configuration/add_templates/python/use_vm_template.yaml
 - - build-config-use-outputs
-  - build_configuration/use_outputs/use_template_with_outputs.yaml
+  - config-path: build_configuration/use_outputs/use_template_with_outputs.yaml
 - - build-config-explicit-dependencies
-  - build_configuration/explicit_dependencies/backend_frontend_instances.yaml
+  - config-path: build_configuration/explicit_dependencies/backend_frontend_instances.yaml
 - - vm-with-disks-jinja
-  - vm_with_disks/jinja/vm_with_disks.yaml
+  - config-path: vm_with_disks/jinja/vm_with_disks.yaml
 - - vm-with-disks-python
-  - vm_with_disks/python/vm_with_disks.yaml
+  - config-path: vm_with_disks/python/vm_with_disks.yaml
 - - container-igm-jinja
-  - container_igm/jinja/container_igm.yaml
+  - config-path: container_igm/jinja/container_igm.yaml
 - - container-igm-python
-  - container_igm/python/container_igm.yaml
+  - config-path: container_igm/python/container_igm.yaml
 - - ssl
-  - ssl/ssl.yaml
+  - config-path: ssl/ssl.yaml
 - - regional-igm
-  - regional_igm/regional_igm.yaml
+  - config-path: regional_igm/regional_igm.yaml
 - - iam
-  - iam/jinja/accessible_resource.yaml
+  - config-path: iam/jinja/accessible_resource.yaml
 - - instance-pool-jinja
-  - instance_pool/jinja/instance-pool.yaml
+  - config-path: instance_pool/jinja/instance-pool.yaml
 - - instance-pool-python
-  - instance_pool/python/instance-pool.yaml
+  - config-path: instance_pool/python/instance-pool.yaml
 - - internal-lb
-  - internal_lb/python/config.yaml
+  - config-path: internal_lb/python/config.yaml
