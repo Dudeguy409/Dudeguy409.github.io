@@ -22,6 +22,8 @@
   - config-path: container_igm/jinja/container_igm.yaml
 - - container-igm-python
   - config-path: container_igm/python/container_igm.yaml
+# TODO(davidsac):  The tests below are somewhat complex.  
+# I may need to create more complex tests to make sure that they are deployed correctly.
 - - ssl
   - config-path: ssl/ssl.yaml
 - - regional-igm
@@ -34,3 +36,9 @@
   - config-path: instance_pool/python/instance-pool.yaml
 - - internal-lb
   - config-path: internal_lb/python/config.yaml
+- - int-lb-hap-j
+  - config-path: internal_lb_haproxy/python/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/config.yaml
