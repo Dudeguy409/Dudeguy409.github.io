@@ -108,19 +108,25 @@
         replace-with: project_name
         file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template-2.py
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - step-by-step-6-python
+  - config-path: step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/python/vm-template.py
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/python/vm-template-2.py
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - step-by-step-6-jinja
+  - config-path: step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/jinja/vm-template.jinja
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/jinja/vm-template-2.jinja
 
 - - waiter
   - config-path: waiter/config.yaml
