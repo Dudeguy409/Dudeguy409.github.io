@@ -417,33 +417,3 @@ class TestComplexDeployment(object):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-  
-  
-  
-  
-  
-  
-   def test_vm_startup_script_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "vm_startup_script/python/vm.yaml")
-    deploy_http_server("vm-startup-script-python",
-                       "vm_startup_script/python/vm.yaml")
-
-  def test_vm_startup_script_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "vm_startup_script/jinja/vm.yaml")
-    deploy_http_server("vm-startup-script-jinja",
-                       "vm_startup_script/jinja/vm.yaml")
-    
-    
-        def test_metadata_from_file_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "metadata_from_file/jinja/config.yaml")
-    deploy_http_server("metadata-from-file-jinja",
-                       "metadata_from_file/jinja/config.yaml")
-
-  def test_metadata_from_file_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "metadata_from_file/python/config.yaml")
-    deploy_http_server("metadata-from-file-python",
-                       "metadata_from_file/python/config.yaml")
