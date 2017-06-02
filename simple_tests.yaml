@@ -186,6 +186,22 @@
         file-to-modify: vm_startup_script/python/vm.yaml
     http-server: true
 
+- - metadata-from-file-jinja
+  - config-path: metadata_from_file/jinja/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: metadata_from_file/jinja/config.yaml
+    http-server: true
+
+- - metadata-from-file-python
+  - config-path: metadata_from_file/python/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: metadata_from_file/python/config.yaml
+    http-server: true
+
 - - int-lb-hap-j
   - config-path: internal_lb_haproxy/jinja/config.yaml
     replace-placeholders:
