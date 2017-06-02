@@ -142,19 +142,19 @@
         replace-with: default_zone
         file-to-modify: single_vm/python/vm.yaml
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - container-vm-jinja
+  - config-path: container_vm/jinja/container_vm.yaml
     replace-placeholders:
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+        file-to-modify: container_vm/jinja/container_vm.yaml
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - container-vm-python
+  - config-path: container_vm/python/container_vm.yaml
     replace-placeholders:
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+        file-to-modify: container_vm/python/container_vm.yaml
 
 - - waiter
   - config-path: waiter/config.yaml
