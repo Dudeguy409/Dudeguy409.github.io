@@ -59,22 +59,10 @@ default_zone = "us-west1-b"
 default_ssh_tunnel_port = 8890
 
 environment = {"default_zone": default_zone, "project_name": project_name}
+command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
 
 with open("simple_tests.yaml", 'r') as stream:
   tests = yaml.load(stream)
-
-
-def setup_module():
-  call("cp -a ../examples/v2/. .")
-  if create_new_project:
-    properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
-    create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
-
-
-def teardown_module():
-  call("rm -R -- */")
-  if create_new_project:
-    delete_deployment(project_deployment_name, host_project)
 
 
 def call(command):
@@ -93,16 +81,72 @@ def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
        + "/' " + file_to_modify)
 
 
-def create_deployment(deployment_name, config_path, project=project_name, properties=None):
-  """Attempts to create a deployment, raising any errors."""
-  deployment_create_command = ("gcloud deployment-manager deployments create "
-                               + deployment_name + " --config "
-                               + config_path + " --project=" + project)
+def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance"):
+  """Creates a map of a deployment's GCE instances and associated IPs."""
+  instance_map = {}
+  raw_resources = call("gcloud deployment-manager resources list --deployment "
+                       + deployment_name + " --format=json")
+  parsed_resources = json.loads(raw_resources)
+  for resource in parsed_resources:
+    if resource["type"] == resource_type_to_parse:
+      parsed_properties = yaml.load(resource["properties"])
+      zone = parsed_properties["zone"]
+      instance_map[resource["name"]] = {"zone": zone}
+  for name in instance_map:
+    instance_map[name]["ip"] = call("gcloud compute instances describe "
+                                    + name + " --zone="
+                                    + instance_map[name]["zone"]
+                                    + " | grep \"networkIP\""
+                                    " | sed 's/networkIP: //'")
+  return instance_map
+
+
+def get_instance_index_page(instance_name, local_port, ip):
+  # TODO(davidsac) get this working
+  """ call("gcloud compute ssh user@" + instance_name + " --zone "
+          + default_zone + " -- -N -L " + str(local_port).strip() + ":"
+          + str(ip).strip() + ":8080")
+  """
+  return call("curl http://localhost:" + str(local_port))
+
+
+def gcloud_dm_command(command_type, deployment_name, project=project_name, properties=None, config_path=None):
+  command = "gcloud deployment-manager deployments "+command_types[command_type]+" "+deployment_name+ " --project=" + project + " --format=json -q"
+  if config_path:
+    command += " --config " + config_path
   if properties:
-    deployment_create_command += " --properties " + properties
+    command += " --properties " + properties
+  return call(command)
+
+
+def create_deployment(deployment_name, config_path, project=project_name, properties=None):
+  """Attempts to create a deployment."""
   print "Creating deployment of " + deployment_name + "..."
-  call(deployment_create_command)
+  gcloud_dm_command("CREATE", deployment_name, project=project_name, properties=None, config_path)
   print "Deployment created."
+
+
+def update_deployment(deployment_name, config_path, project=project_name, properties=None):
+  """Attempts to update a deployment."""
+  print "Updating deployment of " + deployment_name + "..."
+  gcloud_dm_command("UPDATE", deployment_name, project=project_name, properties, config_path)
+  print "Deployment updated."
+
+
+def check_deployment(deployment_name, project=project_name):
+
+  raw_deployment = gcloud_dm_command("DESCRIBE",)
+  parsed_deployment = json.loads(raw_deployment)
+  if parsed_deployment.get("deployment").get("operation").get("error"):
+    raise Exception("An ERROR was found in the deployment's description.\n"
+                    "---BEGIN DESCRIPTION---\n"
+                    + raw_deployment + "---END DESCRIPTION---")
+
+
+def delete_deployment(deployment_name, project=project_name):
+  print "Deleting deployment of " + deployment_name + "..."
+  gcloud_dm_command("DELETE", )
+  print "Deployment deleted."
 
 
 def update_and_check_deployment(deployment_name, config_path):
@@ -137,52 +181,11 @@ def update_and_check_deployment(deployment_name, config_path):
   print "Deployment updated."
 
 
-def check_deployment(deployment_name):
-  deployment_describe_command = ("gcloud deployment-manager "
-                                 "deployments describe " + deployment_name
-                                 + " --format=json --project=" + project_name)
-  raw_deployment = call(deployment_describe_command)
-  parsed_deployment = json.loads(raw_deployment)
-  if parsed_deployment.get("deployment").get("operation").get("error"):
-    raise Exception("An ERROR was found in the deployment's description.\n"
-                    "---BEGIN DESCRIPTION---\n"
-                    + raw_deployment + "---END DESCRIPTION---")
-
-
-def delete_deployment(deployment_name, project=project_name):
-  deployment_delete_command = ("gcloud deployment-manager deployments delete "
-                               + deployment_name + " -q --project="
-                               + project)
-  print "Deleting deployment of " + deployment_name + "..."
-  call(deployment_delete_command)
-  print "Deployment deleted."
-
-
 def deploy(deployment_name, config_path):
   """Attempts to create and delete a deployment, raising any errors."""
   create_deployment(deployment_name, config_path)
   check_deployment(deployment_name)
   delete_deployment(deployment_name)
-
-
-def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance"):
-  """Creates a map of a deployment's GCE instances and associated IPs."""
-  instance_map = {}
-  raw_resources = call("gcloud deployment-manager resources list --deployment "
-                       + deployment_name + " --format=json")
-  parsed_resources = json.loads(raw_resources)
-  for resource in parsed_resources:
-    if resource["type"] == resource_type_to_parse:
-      parsed_properties = yaml.load(resource["properties"])
-      zone = parsed_properties["zone"]
-      instance_map[resource["name"]] = {"zone": zone}
-  for name in instance_map:
-    instance_map[name]["ip"] = call("gcloud compute instances describe "
-                                    + name + " --zone="
-                                    + instance_map[name]["zone"]
-                                    + " | grep \"networkIP\""
-                                    " | sed 's/networkIP: //'")
-  return instance_map
 
 
 def deploy_http_server(deployment_name, config_path):
@@ -197,13 +200,17 @@ def deploy_http_server(deployment_name, config_path):
   delete_deployment(deployment_name)
 
 
-def get_instance_index_page(instance_name, local_port, ip):
-  # TODO(davidsac) get this working
-  """ call("gcloud compute ssh user@" + instance_name + " --zone "
-          + default_zone + " -- -N -L " + str(local_port).strip() + ":"
-          + str(ip).strip() + ":8080")
-  """
-  return call("curl http://localhost:" + str(local_port))
+def setup_module():
+  call("cp -a ../examples/v2/. .")
+  if create_new_project:
+    properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
+    create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
+
+
+def teardown_module():
+  call("rm -R -- */")
+  if create_new_project:
+    delete_deployment(project_deployment_name, host_project)
 
 
 class TestSimpleDeployment(unittest.TestCase):
