@@ -245,10 +245,9 @@ class TestComplexDeployment(object):
       #                                default_ssh_tunnel_port, ip)
       pass
 
-    update_and_check_deployment("step-by-step-8-9-jinja",
-                                "step_by_step_guide/step9_update_a_deployment"
-                                "/jinja/config-with-many-templates.yaml")
-
+    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-jinja")
+    
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.
@@ -271,9 +270,8 @@ class TestComplexDeployment(object):
       #                                default_ssh_tunnel_port, ip)
       pass
 
-    update_and_check_deployment("step-by-step-8-9-python",
-                                "step_by_step_guide/step9_update_a_deployment"
-                                "/python/config-with-many-templates.yaml")
+    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
+    check_deployment("step-by-step-8-9-python")
 
     parsed_instances = parse_instances("step-by-step-8-9-python")
     for instance_name in parsed_instances:
