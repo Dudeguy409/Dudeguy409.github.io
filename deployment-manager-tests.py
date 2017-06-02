@@ -227,7 +227,7 @@ class TestSimpleDeployment(unittest.TestCase):
     else:
       deploy(deployment_name, properties["config-path"])
 
-
+'''
 class TestComplexDeployment(object):
   """A test class for complex deployments needing post-deployment interaction.
   """
@@ -430,3 +430,5 @@ class TestComplexDeployment(object):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
+  
+  '''
