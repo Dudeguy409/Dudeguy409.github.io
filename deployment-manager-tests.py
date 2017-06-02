@@ -32,7 +32,7 @@ configured project.
 
 import json
 import os
-from parameterized import parameterized
+import parameterized
 import subprocess
 import time
 import unittest
@@ -215,7 +215,7 @@ class TestSimpleDeployment(unittest.TestCase):
   were deployed successfully.
   """
 
-  @parameterized.expand(tests)
+  @parameterized.parameterized.expand(tests)
   def test_sequence(self, deployment_name, parameters):
     for replacement in properties.get("replace-placeholders"):
       replace_with = replacement["replace-with"]
