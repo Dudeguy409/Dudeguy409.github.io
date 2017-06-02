@@ -197,7 +197,7 @@ def get_instance_index_page(instance_name, local_port, ip):
   return call("curl http://localhost:" + str(local_port))
 
 
-class TestSimpleDeployment(object):
+class TestSimpleDeployment(unittest.TestCase):
   """A test class for simple deployments.
 
   This is a test class for simple deployments that only need to be deployed in
@@ -205,7 +205,13 @@ class TestSimpleDeployment(object):
   need to be interacted with after being deployed in order to ensure that they
   were deployed successfully.
   """
-  
+
+  @parameterized.expand(tests)
+  def test_sequence(self, name, parameters):
+    print parameters
+    self.assertEqual(name,parameters["file"])
+
+
 class TestComplexDeployment(object):
   """A test class for complex deployments needing post-deployment interaction.
   """
