@@ -52,24 +52,27 @@
       - search-for: "\\[FAMILY_NAME\\]"
         replace-with: debian-8
         file-to-modify: quick_start/vm.yaml
-- - waiter
-  - config-path: waiter/config.yaml
+- - step-by-step-2
+  - config-path: step_by_step_guide/step2_create_a_configuration/two-vms.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
-- - waiter
-  - config-path: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step2_create_a_configuration/two-vms.yaml
+- - step-by-step-4
+  - config-path: step_by_step_guide/step4_use_references/two-vms.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
-- - waiter
-  - config-path: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step4_use_references/two-vms.yaml
+- - step-by-step-5-python
+  - config-path: step_by_step_guide/step5_create_a_template/python/two-vms.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template.py
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template-2.py
 - - waiter
   - config-path: waiter/config.yaml
     replace-placeholders:
