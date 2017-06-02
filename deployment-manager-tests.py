@@ -464,66 +464,7 @@ class TestComplexDeployment(object):
     
     
     
-  
-  
-  
-  
 
-
-
-
-
-
-  def test_step_by_step_5_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/jinja/vm-template-2.jinja")
-    deploy("step-by-step-5-jinja",
-           "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
-
-  
-    def test_step_by_step_6_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/python/vm-template-2.py")
-    deploy("step-by-step-6-python",
-           "step_by_step_guide/step6_use_multiple_templates"
-           "/python/config-with-many-templates.yaml")
-
-  def test_step_by_step_6_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/jinja/vm-template-2.jinja")
-    deploy("step-by-step-6-jinja",
-           "step_by_step_guide/step6_use_multiple_templates"
-           "/jinja/config-with-many-templates.yaml")
-  
-    def test_single_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "single_vm/jinja/vm.yaml")
-    deploy("single-vm",
-           "single_vm/jinja/vm.yaml")
-
-  def test_single_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "single_vm/python/vm.yaml")
-    deploy("single-vm",
-           "single_vm/python/vm.yaml")
-
- 
 
   def test_container_vm_jinja(self):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
