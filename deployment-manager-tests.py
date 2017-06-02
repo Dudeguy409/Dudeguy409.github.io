@@ -205,150 +205,11 @@ class TestSimpleDeployment(object):
   need to be interacted with after being deployed in order to ensure that they
   were deployed successfully.
   """
+  
+class TestComplexDeployment(object):
+  """A test class for complex deployments needing post-deployment interaction.
+  """
 
-  def test_build_configuration_vm(self):
-    deploy("build-config-vm", "build_configuration/vm.yaml")
-
-  def test_build_configuration_vm_and_bigquery(self):
-    deploy("build-config-vm-and-bigquery",
-           "build_configuration/vm_and_bigquery.yaml")
-
-  def test_ssl(self):
-    """ TODO(davidsac) should we interact with the deployment to make
-    sure that it works?  Or is the simple warning-free deployment of an SSL
-    certificate enough?
-    """
-    deploy("ssl", "ssl/ssl.yaml")
-
-  def test_waiter(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "waiter/config.yaml")
-    deploy("waiter", "waiter/config.yaml")
-
-  def test_quick_start(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "quick_start/vm.yaml")
-    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8",
-                                "quick_start/vm.yaml")
-    deploy("quick-start", "quick_start/vm.yaml")
-
-  def test_step_by_step_2(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step2_create_a_configuration/two-vms.yaml")
-    deploy("step-by-step-2",
-           "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
-
-  def test_step_by_step_4(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step4_use_references/two-vms.yaml")
-    deploy("step-by-step-4",
-           "step_by_step_guide/step4_use_references/two-vms.yaml")
-
-  def test_step_by_step_5_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide""/step5_create_a_template"
-                                "/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/python/vm-template-2.py")
-    deploy("step-by-step-5-python",
-           "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
-
-  def test_step_by_step_5_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/jinja/vm-template-2.jinja")
-    deploy("step-by-step-5-jinja",
-           "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
-
-  def test_step_by_step_6_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/python/vm-template-2.py")
-    deploy("step-by-step-6-python",
-           "step_by_step_guide/step6_use_multiple_templates"
-           "/python/config-with-many-templates.yaml")
-
-  def test_step_by_step_6_jinja(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/jinja/vm-template.jinja")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step6_use_multiple_templates"
-                                "/jinja/vm-template-2.jinja")
-    deploy("step-by-step-6-jinja",
-           "step_by_step_guide/step6_use_multiple_templates"
-           "/jinja/config-with-many-templates.yaml")
-
-  def test_step_by_step_7_python(self):
-    deploy("step-by-step-7-python",
-           "step_by_step_guide/step7_use_environment_variables"
-           "/python/config-with-many-templates.yaml")
-
-  def test_step_by_step_7_jinja(self):
-    deploy("step-by-step-7-jinja",
-           "step_by_step_guide/step7_use_environment_variables"
-           "/jinja/config-with-many-templates.yaml")
-
-  def test_build_config_add_templates_jinja(self):
-    deploy("build-config-add-templates-jinja",
-           "build_configuration/add_templates/jinja/use_vm_template.yaml")
-
-  def test_build_config_add_templates_python(self):
-    deploy("build-config-add-templates-python",
-           "build_configuration/add_templates/python/use_vm_template.yaml")
-
-  def test_single_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "single_vm/jinja/vm.yaml")
-    deploy("single-vm",
-           "single_vm/jinja/vm.yaml")
-
-  def test_single_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "single_vm/python/vm.yaml")
-    deploy("single-vm",
-           "single_vm/python/vm.yaml")
-
-  def test_build_config_use_outputs(self):
-    deploy("build-config-use-outputs",
-           "build_configuration/use_outputs/use_template_with_outputs.yaml")
-
-  def test_build_config_explicit_dependencies(self):
-    deploy("build-config-explicit-dependencies",
-           "build_configuration/explicit_dependencies"
-           "/backend_frontend_instances.yaml")
-
-  def test_vm_startup_script_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "vm_startup_script/python/vm.yaml")
-    deploy_http_server("vm-startup-script-python",
-                       "vm_startup_script/python/vm.yaml")
-
-  def test_vm_startup_script_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "vm_startup_script/jinja/vm.yaml")
-    deploy_http_server("vm-startup-script-jinja",
-                       "vm_startup_script/jinja/vm.yaml")
-
-  def test_vpn_auto_subnet(self):
-    # TODO(davidsac) How are we going to test this with the firewall?
-    # TODO(davidsac) figure out what values to use for the parameters
-    # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
-    #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
-    pass
 
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
@@ -403,65 +264,11 @@ class TestSimpleDeployment(object):
 
     delete_deployment("step-by-step-8-9-python")
 
-  def test_step_by_step_10_jinja(self):
-    """ self.create("step-by-step-10-jinja",
-                "step_by_step_guide/step10_use_python_templates"
-                "/jinja/use-jinja-template-with-modules.yaml")
-    """
-    """ TODO(davidsac) when I have time, read through this
-    example and make sure my test will deploy it correctly
-    """
-    pass
 
-  def test_step_by_step_10_python(self):
-    """ self.create("step-by-step-10-python",
-    "step_by_step_guide/step10_use_python_templates"
-    "/python/use-python-template-with-modules.yaml")
-    """
-    """ TODO(davidsac) when I have time, read through this
-    example and make sure my test will deploy it correctly
-    """
-    pass
 
-  def test_common_jinja(self):
-    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
-    # there are any deploymets here, just utility files for other deployments
-    pass
 
-  def test_common_python(self):
-    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
-    # there are any deploymets here, just utility files for other deployments
-    pass
-
-  def test_container_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "container_vm/jinja/container_vm.yaml")
-    deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_container_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "container_vm/python/container_vm.yaml")
-    deploy("container-vm-python", "container_vm/python/container_vm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_nodejs_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "nodejs/jinja/nodejs.yaml")
-    deploy("nodejs-jinja", "nodejs/jinja/nodejs.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_nodejs_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "nodejs/python/nodejs.yaml")
-    deploy("nodejs-python", "nodejs/python/nodejs.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_regional_igm(self):
-    deploy("regional-igm", "regional_igm/regional_igm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_nodejs_l7_jinja(self):
+  
+    def test_nodejs_l7_jinja(self):
     """Tests that the jinja NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone,
@@ -518,50 +325,8 @@ class TestSimpleDeployment(object):
     else:
       print forwarding_rule
     delete_deployment(deployment_name)
+    
 
-  def test_vm_with_disks_jinja(self):
-    deploy("vm-with-disks-jinja", "vm_with_disks/jinja/vm_with_disks.yaml")
-
-  def test_vm_with_disks_python(self):
-    deploy("vm-with-disks-python", "vm_with_disks/python/vm_with_disks.yaml")
-
-  def test_container_igm_jinja(self):
-    deploy("container-igm-jinja",
-           "container_igm/jinja/container_igm.yaml")
-
-  def test_container_igm_python(self):
-    deploy("container-igm-python",
-           "container_igm/python/container_igm.yaml")
-
-  def test_iam(self):
-    deploy("iam", "iam/jinja/accessible_resource.yaml")
-    # TODO(davidsac) make sure that this is actually deploying correctly
-
-  def test_htcondor(self):
-    # TODO(davidsac) read the tutorial and figure out how to deploy this
-    pass
-
-  def test_metadata_from_file_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "metadata_from_file/jinja/config.yaml")
-    deploy_http_server("metadata-from-file-jinja",
-                       "metadata_from_file/jinja/config.yaml")
-
-  def test_metadata_from_file_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "metadata_from_file/python/config.yaml")
-    deploy_http_server("metadata-from-file-python",
-                       "metadata_from_file/python/config.yaml")
-
-  def test_instance_pool_jinja(self):
-    deploy("instance-pool-jinja", "instance_pool/jinja/instance-pool.yaml")
-    # TODO(davidsac) is there anything else that needs to be checked?
-    # The number of instances created, for example?  Or maybe interconnectivity?
-
-  def test_instance_pool_python(self):
-    deploy("instance-pool-python", "instance_pool/python/instance-pool.yaml")
-    # TODO(davidsac) is there anything else that needs to be checked?
-    # The number of instances created, for example?  Or maybe interconnectivity?
 
   def test_image_based_igm_jinja(self):
     # TODO(davidsac) this deployment has some more complex features like an
@@ -607,7 +372,203 @@ class TestSimpleDeployment(object):
                                 "igm-updater/python/frontendver3.yaml")
     delete_deployment(deployment_name)
 
-  def test_internal_lb(self):
-    # TODO(davidsac):  This is a pretty complex example.  It may be necessary
-    # to more thoroughly check that it works
-    deploy("internal-lb", "internal_lb/python/config.yaml")
+    
+    
+
+  def test_htcondor(self):
+    # TODO(davidsac) read the tutorial and figure out how to deploy this
+    pass
+  
+  
+    def test_common_jinja(self):
+    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
+    # there are any deploymets here, just utility files for other deployments
+    pass
+
+  def test_common_python(self):
+    # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
+    # there are any deploymets here, just utility files for other deployments
+    pass
+  
+  
+    def test_step_by_step_10_jinja(self):
+    """ self.create("step-by-step-10-jinja",
+                "step_by_step_guide/step10_use_python_templates"
+                "/jinja/use-jinja-template-with-modules.yaml")
+    """
+    """ TODO(davidsac) when I have time, read through this
+    example and make sure my test will deploy it correctly
+    """
+    pass
+
+  def test_step_by_step_10_python(self):
+    """ self.create("step-by-step-10-python",
+    "step_by_step_guide/step10_use_python_templates"
+    "/python/use-python-template-with-modules.yaml")
+    """
+    """ TODO(davidsac) when I have time, read through this
+    example and make sure my test will deploy it correctly
+    """
+    pass
+  
+  
+  def test_vpn_auto_subnet(self):
+    # TODO(davidsac) How do I test this?
+    # TODO(davidsac) figure out what values to use for the parameters
+    # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
+    #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
+    pass
+  
+  
+  
+  
+  
+  
+   def test_vm_startup_script_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "vm_startup_script/python/vm.yaml")
+    deploy_http_server("vm-startup-script-python",
+                       "vm_startup_script/python/vm.yaml")
+
+  def test_vm_startup_script_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "vm_startup_script/jinja/vm.yaml")
+    deploy_http_server("vm-startup-script-jinja",
+                       "vm_startup_script/jinja/vm.yaml")
+    
+    
+        def test_metadata_from_file_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "metadata_from_file/jinja/config.yaml")
+    deploy_http_server("metadata-from-file-jinja",
+                       "metadata_from_file/jinja/config.yaml")
+
+  def test_metadata_from_file_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "metadata_from_file/python/config.yaml")
+    deploy_http_server("metadata-from-file-python",
+                       "metadata_from_file/python/config.yaml")
+    
+    
+    
+    
+    
+    
+    
+  
+  
+  
+  
+  def test_waiter(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "waiter/config.yaml")
+    deploy("waiter", "waiter/config.yaml")
+
+  def test_quick_start(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "quick_start/vm.yaml")
+    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8",
+                                "quick_start/vm.yaml")
+    deploy("quick-start", "quick_start/vm.yaml")
+
+  def test_step_by_step_2(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step2_create_a_configuration/two-vms.yaml")
+    deploy("step-by-step-2",
+           "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
+
+  def test_step_by_step_4(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step4_use_references/two-vms.yaml")
+    deploy("step-by-step-4",
+           "step_by_step_guide/step4_use_references/two-vms.yaml")
+
+  def test_step_by_step_5_python(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide""/step5_create_a_template"
+                                "/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/python/vm-template-2.py")
+    deploy("step-by-step-5-python",
+           "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
+
+  def test_step_by_step_5_jinja(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide/step5_create_a_template"
+                                "/jinja/vm-template-2.jinja")
+    deploy("step-by-step-5-jinja",
+           "step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml")
+
+  
+    def test_step_by_step_6_python(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/python/vm-template.py")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/python/vm-template-2.py")
+    deploy("step-by-step-6-python",
+           "step_by_step_guide/step6_use_multiple_templates"
+           "/python/config-with-many-templates.yaml")
+
+  def test_step_by_step_6_jinja(self):
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/jinja/vm-template.jinja")
+    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
+                                "step_by_step_guide"
+                                "/step6_use_multiple_templates"
+                                "/jinja/vm-template-2.jinja")
+    deploy("step-by-step-6-jinja",
+           "step_by_step_guide/step6_use_multiple_templates"
+           "/jinja/config-with-many-templates.yaml")
+  
+    def test_single_vm_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "single_vm/jinja/vm.yaml")
+    deploy("single-vm",
+           "single_vm/jinja/vm.yaml")
+
+  def test_single_vm_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "single_vm/python/vm.yaml")
+    deploy("single-vm",
+           "single_vm/python/vm.yaml")
+
+ 
+
+  def test_container_vm_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "container_vm/jinja/container_vm.yaml")
+    deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
+  def test_container_vm_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "container_vm/python/container_vm.yaml")
+    deploy("container-vm-python", "container_vm/python/container_vm.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
+  def test_nodejs_jinja(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs/jinja/nodejs.yaml")
+    deploy("nodejs-jinja", "nodejs/jinja/nodejs.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
+  def test_nodejs_python(self):
+    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
+                                "nodejs/python/nodejs.yaml")
+    deploy("nodejs-python", "nodejs/python/nodejs.yaml")
+    # TODO(davidsac) ensure after deployment that this deployed correctly
+
+
+
