@@ -391,7 +391,7 @@ class TestComplexDeployment(object):
     pass
   
   
-    def test_common_jinja(self):
+  def test_common_jinja(self):
     # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
     # there are any deploymets here, just utility files for other deployments
     pass
@@ -401,8 +401,7 @@ class TestComplexDeployment(object):
     # there are any deploymets here, just utility files for other deployments
     pass
   
-  
-    def test_step_by_step_10_jinja(self):
+  def test_step_by_step_10_jinja(self):
     """ self.create("step-by-step-10-jinja",
                 "step_by_step_guide/step10_use_python_templates"
                 "/jinja/use-jinja-template-with-modules.yaml")
@@ -421,7 +420,6 @@ class TestComplexDeployment(object):
     example and make sure my test will deploy it correctly
     """
     pass
-  
   
   def test_vpn_auto_subnet(self):
     # TODO(davidsac) How do I test this?
