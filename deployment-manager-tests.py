@@ -213,6 +213,7 @@ class TestSimpleDeployment(unittest.TestCase):
   def test_sequence(self, name, parameters):
     print parameters
     self.assertEqual(name,parameters["file"])
+    """ start by replacing the placeholders in all of the files, then either do http server deploy or reg deploy """
 
 
 class TestComplexDeployment(object):
