@@ -471,29 +471,8 @@ class TestComplexDeployment(object):
 
 
 
-  def test_step_by_step_2(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step2_create_a_configuration/two-vms.yaml")
-    deploy("step-by-step-2",
-           "step_by_step_guide/step2_create_a_configuration/two-vms.yaml")
 
-  def test_step_by_step_4(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide"
-                                "/step4_use_references/two-vms.yaml")
-    deploy("step-by-step-4",
-           "step_by_step_guide/step4_use_references/two-vms.yaml")
 
-  def test_step_by_step_5_python(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide""/step5_create_a_template"
-                                "/python/vm-template.py")
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "step_by_step_guide/step5_create_a_template"
-                                "/python/vm-template-2.py")
-    deploy("step-by-step-5-python",
-           "step_by_step_guide/step5_create_a_template/python/two-vms.yaml")
 
   def test_step_by_step_5_jinja(self):
     replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
