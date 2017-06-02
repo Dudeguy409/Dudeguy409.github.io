@@ -122,20 +122,19 @@ def gcloud_dm_command(command_type, deployment_name, project=project_name, prope
 def create_deployment(deployment_name, config_path, project=project_name, properties=None):
   """Attempts to create a deployment."""
   print "Creating deployment of " + deployment_name + "..."
-  gcloud_dm_command("CREATE", deployment_name, project=project_name, properties=None, config_path)
+  gcloud_dm_command("CREATE", deployment_name, project, properties, config_path)
   print "Deployment created."
 
 
 def update_deployment(deployment_name, config_path, project=project_name, properties=None):
   """Attempts to update a deployment."""
   print "Updating deployment of " + deployment_name + "..."
-  gcloud_dm_command("UPDATE", deployment_name, project=project_name, properties, config_path)
+  gcloud_dm_command("UPDATE", deployment_name, project, properties, config_path)
   print "Deployment updated."
 
 
 def check_deployment(deployment_name, project=project_name):
-
-  raw_deployment = gcloud_dm_command("DESCRIBE",)
+  raw_deployment = gcloud_dm_command("DESCRIBE", deployment_name, project)
   parsed_deployment = json.loads(raw_deployment)
   if parsed_deployment.get("deployment").get("operation").get("error"):
     raise Exception("An ERROR was found in the deployment's description.\n"
@@ -145,21 +144,16 @@ def check_deployment(deployment_name, project=project_name):
 
 def delete_deployment(deployment_name, project=project_name):
   print "Deleting deployment of " + deployment_name + "..."
-  gcloud_dm_command("DELETE", )
+  gcloud_dm_command("DELETE", deployment_name, project)
   print "Deployment deleted."
 
 
-def update_and_check_deployment(deployment_name, config_path):
-  """Attempts to update an existing deployment, raising any errors."""
-  deployment_update_command = ("gcloud deployment-manager deployments update "
-                               + deployment_name + " --config examples/v2/"
-                               + config_path + " --project=" + project_name)
-  print "Updating deployment of " + deployment_name + "..."
-  number_of_attempts = 0
+def update_rolling_update_deployment(deployment_name, config_path, project=project_name):
   max_number_of_attempts = 3
+  number_of_attempts = 0
   while max_number_of_attempts > number_of_attempts:
     try:
-      call(deployment_update_command)
+      update_deployment(deployment_name, config_path, project)
       break
     except Exception as e:
       if "412" in e.message:
@@ -178,7 +172,6 @@ def update_and_check_deployment(deployment_name, config_path):
         number_of_attempts += 1
       else:
         raise e
-  print "Deployment updated."
 
 
 def deploy(deployment_name, config_path):
