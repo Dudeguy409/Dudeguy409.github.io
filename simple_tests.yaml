@@ -2,10 +2,10 @@
   - config-path: build_configuration/vm.yaml
 - - build-config-vm-and-bigquery
   - config-path: build_configuration/vm_and_bigquery.yaml
-- - step-by-step-7-python
-  - config-path: step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml
 - - step-by-step-7-jinja
   - config-path: step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml
+- - step-by-step-7-python
+  - config-path: step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml
 - - build-config-add-templates-jinja
   - config-path: build_configuration/add_templates/jinja/use_vm_template.yaml
 - - build-config-add-templates-python
@@ -37,6 +37,93 @@
 - - internal-lb
   - config-path: internal_lb/python/config.yaml
 # TODO(davidsac) figure out a better way to pass in zone to tests?
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - quick-start
+  - config-path: quick_start/vm.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: quick_start/vm.yaml
+      - search-for: "\\[FAMILY_NAME\\]"
+        replace-with: debian-8
+        file-to-modify: quick_start/vm.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
 - - int-lb-hap-j
   - config-path: internal_lb_haproxy/jinja/config.yaml
     replace-placeholders:
