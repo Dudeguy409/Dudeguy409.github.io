@@ -32,8 +32,10 @@ configured project.
 
 import json
 import os
+import parameterized
 import subprocess
 import time
+import unittest
 import yaml
 
 # TODO(davidsac) Consider removing the description here or above
@@ -56,17 +58,21 @@ project_name = project_to_create if create_new_project else host_project
 default_zone = "us-west1-b"
 default_ssh_tunnel_port = 8890
 
+environment = {"default_zone": default_zone, "project_name": project_name}
+
 with open("simple_tests.yaml", 'r') as stream:
   tests = yaml.load(stream)
 
 
 def setup_module():
+  call("cp -a ../examples/v2/. .")
   if create_new_project:
     properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
     create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
 
 
 def teardown_module():
+  call("rm -R -- */")
   if create_new_project:
     delete_deployment(project_deployment_name, host_project)
 
@@ -210,10 +216,16 @@ class TestSimpleDeployment(unittest.TestCase):
   """
 
   @parameterized.expand(tests)
-  def test_sequence(self, name, parameters):
-    print parameters
-    self.assertEqual(name,parameters["file"])
-    """ start by replacing the placeholders in all of the files, then either do http server deploy or reg deploy """
+  def test_sequence(self, deployment_name, parameters):
+    for replacement in properties.get("replace-placeholders"):
+      replace_with = replacement["replace-with"]
+      if environment.get(eplace_with):
+        replace_with = environment.get(eplace_with)
+      replace_placeholder_in_file(replacement["search-for"], replace_with, replacement["file-to-modify"])
+    if properties.get("http-server"):
+      deploy_http_server
+    else:
+      deploy(deployment_name, properties["config-path"])
 
 
 class TestComplexDeployment(object):
