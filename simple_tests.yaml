@@ -73,12 +73,15 @@
       - search-for: "\\[MY_PROJECT\\]"
         replace-with: project_name
         file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template-2.py
-- - waiter
-  - config-path: waiter/config.yaml
+- - step-by-step-5-jinja
+  - config-path: step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml
     replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja
 - - waiter
   - config-path: waiter/config.yaml
     replace-placeholders:
