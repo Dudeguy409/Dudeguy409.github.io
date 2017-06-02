@@ -170,6 +170,22 @@
         replace-with: default_zone
         file-to-modify: nodejs/python/nodejs.yaml
 
+- - vm-startup-script-jinja
+  - config-path: vm_startup_script/jinja/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: vm_startup_script/jinja/vm.yaml
+    http-server: true
+
+- - vm-startup-script-python
+  - config-path: vm_startup_script/python/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: vm_startup_script/python/vm.yaml
+    http-server: true
+
 - - int-lb-hap-j
   - config-path: internal_lb_haproxy/jinja/config.yaml
     replace-placeholders:
