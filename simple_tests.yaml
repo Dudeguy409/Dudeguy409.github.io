@@ -156,19 +156,19 @@
         replace-with: default_zone
         file-to-modify: container_vm/python/container_vm.yaml
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - nodejs-jinja
+  - config-path: nodejs/jinja/nodejs.yaml
     replace-placeholders:
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+        file-to-modify: nodejs/jinja/nodejs.yaml
 
-- - waiter
-  - config-path: waiter/config.yaml
+- - nodejs-python
+  - config-path: nodejs/python/nodejs.yaml
     replace-placeholders:
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
-        file-to-modify: waiter/config.yaml
+        file-to-modify: nodejs/python/nodejs.yaml
 
 - - int-lb-hap-j
   - config-path: internal_lb_haproxy/jinja/config.yaml
