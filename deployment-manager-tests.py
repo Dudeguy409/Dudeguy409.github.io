@@ -56,6 +56,9 @@ project_name = project_to_create if create_new_project else host_project
 default_zone = "us-west1-b"
 default_ssh_tunnel_port = 8890
 
+with open("simple_tests.yaml", 'r') as stream:
+  tests = yaml.load(stream)
+
 
 def setup_module():
   if create_new_project:
@@ -465,17 +468,8 @@ class TestComplexDeployment(object):
   
   
   
-  def test_waiter(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "waiter/config.yaml")
-    deploy("waiter", "waiter/config.yaml")
 
-  def test_quick_start(self):
-    replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
-                                "quick_start/vm.yaml")
-    replace_placeholder_in_file("\\[FAMILY_NAME\\]", "debian-8",
-                                "quick_start/vm.yaml")
-    deploy("quick-start", "quick_start/vm.yaml")
+
 
   def test_step_by_step_2(self):
     replace_placeholder_in_file("\\[MY_PROJECT\\]", project_name,
