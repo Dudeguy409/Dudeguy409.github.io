@@ -219,7 +219,6 @@ class TestComplexDeployment(object):
   """A test class for complex deployments needing post-deployment interaction.
   """
 
-
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
@@ -273,11 +272,7 @@ class TestComplexDeployment(object):
 
     delete_deployment("step-by-step-8-9-python")
 
-
-
-
-  
-    def test_nodejs_l7_jinja(self):
+  def test_nodejs_l7_jinja(self):
     """Tests that the jinja NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
     replace_placeholder_in_file("SECOND_ZONE_TO_RUN", secondary_zone,
@@ -334,8 +329,6 @@ class TestComplexDeployment(object):
     else:
       print forwarding_rule
     delete_deployment(deployment_name)
-    
-
 
   def test_image_based_igm_jinja(self):
     # TODO(davidsac) this deployment has some more complex features like an
@@ -380,9 +373,6 @@ class TestComplexDeployment(object):
     update_and_check_deployment(deployment_name,
                                 "igm-updater/python/frontendver3.yaml")
     delete_deployment(deployment_name)
-
-    
-    
 
   def test_htcondor(self):
     # TODO(davidsac) read the tutorial and figure out how to deploy this
