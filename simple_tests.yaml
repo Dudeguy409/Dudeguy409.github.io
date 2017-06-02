@@ -36,9 +36,25 @@
   - config-path: instance_pool/python/instance-pool.yaml
 - - internal-lb
   - config-path: internal_lb/python/config.yaml
+# TODO(davidsac) figure out a better way to pass in zone to tests?
 - - int-lb-hap-j
+  - config-path: internal_lb_haproxy/jinja/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/jinja/config.yaml
+# TODO(davidsac): There are two copies of the python files it seems.
+# Which ones are the most up-to-date?
+- - int-lb-hap-p-a
   - config-path: internal_lb_haproxy/python/config.yaml
     replace-placeholders:
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/python/config.yaml
+- - int-lb-hap-p-b
+  - config-path: internal_lb_haproxy/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
         file-to-modify: internal_lb_haproxy/config.yaml
+        
