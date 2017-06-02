@@ -217,11 +217,12 @@ class TestSimpleDeployment(unittest.TestCase):
 
   @parameterized.parameterized.expand(tests)
   def test_sequence(self, deployment_name, parameters):
-    for replacement in parameters.get("replace-placeholders"):
-      replace_with = replacement["replace-with"]
-      if environment.get(replace_with):
-        replace_with = environment.get(replace_with)
-      replace_placeholder_in_file(replacement["search-for"], replace_with, replacement["file-to-modify"])
+    if parameters.get("replace-placeholders"):
+      for replacement in parameters.get("replace-placeholders"):
+        replace_with = replacement["replace-with"]
+        if environment.get(replace_with):
+          replace_with = environment.get(replace_with)
+        replace_placeholder_in_file(replacement["search-for"], replace_with, replacement["file-to-modify"])
     if parameters.get("http-server"):
       deploy_http_server(deployment_name, parameters["config-path"])
     else:
