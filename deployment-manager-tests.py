@@ -457,38 +457,3 @@ class TestComplexDeployment(object):
                                 "metadata_from_file/python/config.yaml")
     deploy_http_server("metadata-from-file-python",
                        "metadata_from_file/python/config.yaml")
-    
-    
-    
-    
-    
-    
-    
-
-
-  def test_container_vm_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "container_vm/jinja/container_vm.yaml")
-    deploy("container-vm-jinja", "container_vm/jinja/container_vm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_container_vm_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "container_vm/python/container_vm.yaml")
-    deploy("container-vm-python", "container_vm/python/container_vm.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_nodejs_jinja(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "nodejs/jinja/nodejs.yaml")
-    deploy("nodejs-jinja", "nodejs/jinja/nodejs.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-  def test_nodejs_python(self):
-    replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
-                                "nodejs/python/nodejs.yaml")
-    deploy("nodejs-python", "nodejs/python/nodejs.yaml")
-    # TODO(davidsac) ensure after deployment that this deployed correctly
-
-
-
