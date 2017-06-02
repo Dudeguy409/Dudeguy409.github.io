@@ -370,9 +370,9 @@ class TestComplexDeployment(object):
     deployment_name = "igm-updater-jinja"
     create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_and_check_deployment(deployment_name,
+    update_rolling_update_deployment(deployment_name,
                                 "igm-updater/jinja/frontendver2.yaml")
-    update_and_check_deployment(deployment_name,
+    update_rolling_update_deployment(deployment_name,
                                 "igm-updater/jinja/frontendver3.yaml")
     delete_deployment(deployment_name)
 
@@ -382,9 +382,9 @@ class TestComplexDeployment(object):
     deployment_name = "igm-updater-python"
     create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml")
     check_deployment(deployment_name)
-    update_and_check_deployment(deployment_name,
+    update_rolling_update_deployment(deployment_name,
                                 "igm-updater/python/frontendver2.yaml")
-    update_and_check_deployment(deployment_name,
+    update_rolling_update_deployment(deployment_name,
                                 "igm-updater/python/frontendver3.yaml")
     delete_deployment(deployment_name)
 
