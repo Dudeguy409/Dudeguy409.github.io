@@ -106,8 +106,9 @@ def get_instance_index_page(instance_name, local_port, ip):
   """ call("gcloud compute ssh user@" + instance_name + " --zone "
           + default_zone + " -- -N -L " + str(local_port).strip() + ":"
           + str(ip).strip() + ":8080")
-  """
-  return call("curl http://localhost:" + str(local_port))
+  
+  return call("curl http://localhost:" + str(local_port))"""
+  return "This is not a real page"
 
 
 def gcloud_dm_command(command_type, deployment_name, project=project_name, properties=None, config_path=None):
