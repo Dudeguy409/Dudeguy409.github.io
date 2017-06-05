@@ -433,7 +433,7 @@ if __name__ == "__main__":
   project_creation_args.add_argument('--new_proj_name', nargs=1, help="The name for the new project.")
   project_creation_args.add_argument('--new_proj_org', nargs=1, help="The organization in which to create the new project.")
   project_creation_args.add_argument('--new_proj_service_account_a', nargs=1, help="The first service account to add to the new project.")
-  project_creation_args.add_argument('--new_proj_service_account_b ', nargs=1, help="The second service account to add to the new project.")
+  project_creation_args.add_argument('--new_proj_service_account_b', nargs=1, help="The second service account to add to the new project.")
 
   args = parser.parse_args()
   sys.argv[1:] = []
