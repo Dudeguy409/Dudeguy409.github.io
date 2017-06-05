@@ -452,4 +452,5 @@ if __name__ == "__main__":
   default_zone = args.default_zone[0]
   ssh_tunnel_port = args.ssh_tunnel_port
   
+  print new_proj_deployment_name, new_proj_name, new_proj_org, new_proj_service_account_a, new_proj_service_account_b, new_proj_billing_account, new_proj_account_to_create, host_project, create_new_project, project_name, default_zone, ssh_tunnel_port, environment
   unittest.main()
