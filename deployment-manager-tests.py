@@ -450,6 +450,6 @@ if __name__ == "__main__":
   create_new_project = args.create_new_project
   project_name = new_proj_name if create_new_project else host_project
   default_zone = args.default_zone[0]
-  ssh_tunnel_port = args.ssh_tunnel_port[0]
+  ssh_tunnel_port = args.ssh_tunnel_port
   
   unittest.main()
