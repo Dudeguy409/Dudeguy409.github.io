@@ -166,8 +166,8 @@ def deploy_http_server(deployment_name, config_path):
 def setUpModule():
   call("cp -a ../examples/v2/. .")
   if create_new_project:
-    properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
-    create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
+    properties = "\"PROJECT_NAME:'" + new_proj_name + "',ORGANIZATION_ID:'" + new_proj_org + "',BILLING_ACCOUNT:'" + new_proj_billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + new_proj_account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + new_proj_service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + new_proj_service_account_b + "'\""
+    create_deployment(new_proj_deployment_name, "config-template.jinja", host_project, properties)
 
 
 def tearDownModule():
