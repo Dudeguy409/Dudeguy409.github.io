@@ -420,10 +420,10 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(description='Deploy github Deployment Manager examples.')
 
   required_args = parser.add_argument_group('required arguments')
-  required_args.add_argument('--host_project', help='The host project.  If running the tests in the project creation mode, this is the project in which the project will be deployed.  If not in project creation mode, this is the project in which all of the tests are deployed.', required=True)
+  required_args.add_argument('--host_project', required=True, nargs=1, help='The host project.  If running the tests in the project creation mode, this is the project in which the project will be deployed.  If not in project creation mode, this is the project in which all of the tests are deployed.')
 
-  parser.add_argument('--default_zone', help='The zone to use when an example requires the user to specify a port.', default='us-west1-b')
-  parser.add_argument('--ssh_tunnel_port', help='The port on which the local machine should create an ssh tunnel.  The default is 8890', default=8890, type=int)
+  parser.add_argument('--default_zone', default='us-west1-b', nargs=1, help='The zone to use when an example requires the user to specify a port.')
+  parser.add_argument('--ssh_tunnel_port', default=8890, type=int, nargs=1, help='The port on which the local machine should create an ssh tunnel.  The default is 8890')
 
   project_creation_args = parser.add_argument_group('project creation arguments')
   project_creation_args.add_argument('--create_new_project', action='store_true', help='If this flag is icluded, a temporary project will be created to run test deployments.  However, the rest of the project creation arguments will need to be included as well. Follow the prerequisite instructions in the project creation github example (steps 1-6):\n\nhttps://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation\n\nThen, supply the necessary arguments through the command line.')
@@ -450,6 +450,6 @@ if __name__ == "__main__":
   create_new_project = args.create_new_project
   project_name = new_proj_name if create_new_project else host_project
   default_zone = args.default_zone[0]
-  ssh_tunnel_port = args.ssh_tunnel_port
+  ssh_tunnel_port = args.ssh_tunnel_port[0]
   
   unittest.main()
