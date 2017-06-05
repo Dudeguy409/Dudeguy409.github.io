@@ -448,7 +448,7 @@ if __name__ == "__main__":
 
   host_project = args.host_project
   create_new_project = args.create_new_project
-  project_name = project_to_create if create_new_project else host_project
+  project_name = new_proj_name if create_new_project else host_project
   default_zone = args.default_zone
   ssh_tunnel_port = args.ssh_tunnel_port
   
