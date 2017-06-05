@@ -48,7 +48,7 @@ project_name = None
 default_zone = None
 ssh_tunnel_port = None
 
-environment = {"default_zone": default_zone, "project_name": project_name}
+environment = None
 command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
 
 with open("simple_tests.yaml", 'r') as stream:
@@ -451,6 +451,8 @@ if __name__ == "__main__":
   project_name = new_proj_name if create_new_project else host_project
   default_zone = args.default_zone
   ssh_tunnel_port = args.ssh_tunnel_port
+  
+  environment = {"default_zone": default_zone, "project_name": project_name}
   
   print new_proj_deployment_name, new_proj_name, new_proj_org, new_proj_service_account_a, new_proj_service_account_b, new_proj_billing_account, new_proj_account_to_create, host_project, create_new_project, project_name, default_zone, ssh_tunnel_port, environment
   unittest.main()
