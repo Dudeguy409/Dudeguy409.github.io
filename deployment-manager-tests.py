@@ -409,32 +409,25 @@ if __name__ == "__main__":
   parser.add_argument('--ssh_tunnel_port', help='The port on which the local machine should create an ssh tunnel.  The default is 8890', default=8890, type=int)
 
   project_creation_args = parser.add_argument_group('project creation arguments')
-  project_creation_args.add_argument('--create_new_project', action='store_true', help='If this flag is icluded, a new project will be created to run tests deployments and then be deleted.  If so, the other project creation arguments must also be included.')
-  project_creation_args.add_argument('--account_to_create', nargs=1, help="The name of the service account to create for the new project.")
+  project_creation_args.add_argument('--create_new_project', action='store_true', help='If this flag is icluded, a temporary project will be created to run test deployments.  However, the rest of the project creation arguments will need to be included as well. Follow the prerequisite instructions in the project creation github example (steps 1-6):\n\nhttps://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation\n\nThen, supply the necessary arguments through the command line.')
+  project_creation_args.add_argument('--new_proj_account_to_create', nargs=1, help="The name of the service account to create for the new project.")
   project_creation_args.add_argument('--new_proj_billing_account', nargs=1, help="The billing account to use for the new project.")
   project_creation_args.add_argument('--new_proj_deployment_name', nargs=1, help="The name in the host project of the deployment to create the new project.")
   project_creation_args.add_argument('--new_proj_name', nargs=1, help="The name for the new project.")
   project_creation_args.add_argument('--new_proj_org', nargs=1, help="The organization in which to create the new project.")
-  project_creation_args.add_argument('--service_account_a', nargs=1, help="The first service account to add to the new project.")
-  project_creation_args.add_argument('--service_account_b ', nargs=1, help="The second service account to add to the new project.")
+  project_creation_args.add_argument('--new_proj_service_account_a', nargs=1, help="The first service account to add to the new project.")
+  project_creation_args.add_argument('--new_proj_service_account_b ', nargs=1, help="The second service account to add to the new project.")
 
   args = parser.parse_args()
   sys.argv[1:] = []
-  
-  # TODO(davidsac) Consider removing the description here or above
-  
-  """
-  In order to create a temporary project in which to create and delete these test
-  deployments, follow the prerequisite instructions in the project creation github example (steps 1-6):
-  https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
-  Then, supply the necessary arguments through the command line"""
-  project_deployment_name = args.new_proj_deployment_name
-  project_to_create = args.new_proj_name
-  organization = args.new_proj_org
-  service_account_a = args.service_account_a
-  service_account_b = args.service_account_b
-  billing_account = args.new_proj_billing_account
-  account_to_create = args.account_to_create
+
+  new_proj_deployment_name = args.new_proj_deployment_name
+  new_proj_name = args.new_proj_name
+  new_proj_org = args.new_proj_org
+  new_proj_service_account_a = args.new_proj_service_account_a
+  new_proj_service_account_b = args.new_proj_service_account_b
+  new_proj_billing_account = args.new_proj_billing_account
+  new_proj_account_to_create = args.new_proj_account_to_create
 
   host_project = args.host_project
   create_new_project = args.create_new_project
