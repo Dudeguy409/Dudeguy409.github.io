@@ -37,29 +37,8 @@ import subprocess
 import time
 import unittest
 import yaml
-
-# TODO(davidsac) Consider removing the description here or above
-# The variables immediately below are used to create a new project in which to
-# make test deployments, but only if the environment variable
-# "DM_TEST_CREATE_NEW_PROJECT" is set to "TRUE".  Please see the example
-# instructions on GitHub to see what value to assign each variable:
-# https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
-project_deployment_name = os.environ.get("DM_TEST_DEPLOYMENT_NAME")
-project_to_create = os.environ.get("DM_TEST_PROJECT_TO_CREATE")
-organization = os.environ.get("DM_TEST_ORGANIZATION_ID")
-service_account_a = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_A")
-service_account_b = os.environ.get("DM_TEST_SERVICE_ACCOUNT_OWNER_B")
-billing_account = os.environ.get("DM_TEST_BILLING_ACCOUNT")
-account_to_create = os.environ.get("DM_TEST_SERVICE_ACCOUNT_TO_CREATE")
-
-host_project = os.environ.get("DM_TEST_HOST_PROJECT")
-create_new_project = os.environ.get("DM_TEST_CREATE_NEW_PROJECT") == "TRUE"
-project_name = project_to_create if create_new_project else host_project
-default_zone = "us-west1-b"
-default_ssh_tunnel_port = 8890
-
-environment = {"default_zone": default_zone, "project_name": project_name}
-command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
+import argparse
+import sys
 
 with open("simple_tests.yaml", 'r') as stream:
   tests = yaml.load(stream)
@@ -184,20 +163,20 @@ def deploy_http_server(deployment_name, config_path):
   check_deployment(deployment_name)
   parsed_instances = parse_instances(deployment_name)
   for instance_name in parsed_instances:
-    page = get_instance_index_page(instance_name, default_ssh_tunnel_port,
+    page = get_instance_index_page(instance_name, ssh_tunnel_port,
                                    parsed_instances[instance_name]["ip"])
     # TODO(davidsac) assert that the value is what is expected
   delete_deployment(deployment_name)
 
 
-def setup_module():
+def setUpModule():
   call("cp -a ../examples/v2/. .")
   if create_new_project:
     properties = "\"PROJECT_NAME:'" + project_to_create + "',ORGANIZATION_ID:'" + organization + "',BILLING_ACCOUNT:'" + billing_account + "',SERVICE_ACCOUNT_TO_CREATE:'" + account_to_create + "',SERVICE_ACCOUNT_OWNER_A:'" + service_account_a + "',SERVICE_ACCOUNT_OWNER_B:'" + service_account_b + "'\""
     create_deployment(project_deployment_name, "config-template.jinja", host_project, properties)
 
 
-def teardown_module():
+def tearDownModule():
   call("rm -R -- */")
   if create_new_project:
     delete_deployment(project_deployment_name, host_project)
@@ -226,7 +205,7 @@ class TestSimpleDeployment(unittest.TestCase):
       deploy(deployment_name, parameters["config-path"])
 
 
-class TestComplexDeployment(object):
+class TestComplexDeployment(unittest.TestCase):
   """A test class for complex deployments needing post-deployment interaction.
   """
 
@@ -239,7 +218,7 @@ class TestComplexDeployment(object):
     parsed_instances = parse_instances("step-by-step-8-9-jinja")
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name,
-      #                                default_ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip)
       pass
 
     update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
@@ -264,7 +243,7 @@ class TestComplexDeployment(object):
     parsed_instances = parse_instances("step-by-step-8-9-python")
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name,
-      #                                default_ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip)
       pass
 
     update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
@@ -277,7 +256,7 @@ class TestComplexDeployment(object):
       call("gcloud compute instances reset " + instance_name + " --project="
            + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name,
-      #                                default_ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip)
 
     delete_deployment("step-by-step-8-9-python")
 
@@ -424,3 +403,47 @@ class TestComplexDeployment(object):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
+
+if __name__ == "__main__":
+  
+  parser = argparse.ArgumentParser(description='Deploy github Deployment Manager examples.')
+
+  required_args = parser.add_argument_group('required arguments')
+  required_args.add_argument('--host_project', help='The host project.  If running the tests in the project creation mode, this is the project in which the project will be deployed.  If not in project creation mode, this is the project in which all of the tests are deployed.', required=True)
+
+  parser.add_argument('--default_zone', help='The zone to use when an example requires the user to specify a port.', default='us-west1-b')
+  parser.add_argument('--ssh_tunnel_port', help='The port on which the local machine should create an ssh tunnel.  The default is 8890', default=8890, type=int)
+
+  project_creation_args = parser.add_argument_group('project creation arguments')
+  project_creation_args.add_argument('--create_new_project', action='store_true', help='If this flag is icluded, a new project will be created to run tests deployments and then be deleted.  If so, the other project creation arguments must also be included.')
+  project_creation_args.add_argument('--account_to_create', nargs=1, help="The name of the service account to create for the new project.")
+  project_creation_args.add_argument('--new_proj_billing_account', nargs=1, help="The billing account to use for the new project.")
+  project_creation_args.add_argument('--new_proj_deployment_name', nargs=1, help="The name in the host project of the deployment to create the new project.")
+  project_creation_args.add_argument('--new_proj_name', nargs=1, help="The name for the new project.")
+  project_creation_args.add_argument('--new_proj_org', nargs=1, help="The organization in which to create the new project.")
+  project_creation_args.add_argument('--service_account_a', nargs=1, help="The first service account to add to the new project.")
+  project_creation_args.add_argument('--service_account_b ', nargs=1, help="The second service account to add to the new project.")
+
+  args = parser.parse_args()
+  sys.argv[1:] = []
+  
+  # TODO(davidsac) Consider removing the description here or above
+  #  Please see the example instructions on GitHub to see what value to assign each variable: https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
+  project_deployment_name = args.new_proj_deployment_name
+  project_to_create = args.new_proj_name
+  organization = args.new_proj_org
+  service_account_a = args.service_account_a
+  service_account_b = args.service_account_b
+  billing_account = args.new_proj_billing_account
+  account_to_create = args.account_to_create
+
+  host_project = args.host_project
+  create_new_project = args.create_new_project
+  project_name = project_to_create if create_new_project else host_project
+  default_zone = args.default_zone
+  ssh_tunnel_port = args.ssh_tunnel_port
+
+  environment = {"default_zone": default_zone, "project_name": project_name}
+  command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
+  
+  unittest.main()
