@@ -75,7 +75,7 @@ def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
-                       + deployment_name + " --project=--format=json")
+                       + deployment_name + " --project=" + project_name +"--format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == resource_type_to_parse:
@@ -83,7 +83,7 @@ def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance
       zone = parsed_properties["zone"]
       instance_map[resource["name"]] = {"zone": zone}
   for name in instance_map:
-    instance_map[name]["ip"] = call("gcloud compute instances describe " + name + " --project=" + project + " --zone=" + instance_map[name]["zone"] + " | grep \"networkIP\" | sed 's/networkIP: //'")
+    instance_map[name]["ip"] = call("gcloud compute instances describe " + name + " --project=" + project_name + " --zone=" + instance_map[name]["zone"] + " | grep \"networkIP\" | sed 's/networkIP: //'")
   return instance_map
 
 
