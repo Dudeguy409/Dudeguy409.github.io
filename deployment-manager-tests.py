@@ -438,18 +438,18 @@ if __name__ == "__main__":
   args = parser.parse_args()
   sys.argv[1:] = []
 
-  new_proj_deployment_name = args.new_proj_deployment_name
-  new_proj_name = args.new_proj_name
-  new_proj_org = args.new_proj_org
-  new_proj_service_account_a = args.new_proj_service_account_a
-  new_proj_service_account_b = args.new_proj_service_account_b
-  new_proj_billing_account = args.new_proj_billing_account
-  new_proj_account_to_create = args.new_proj_account_to_create
+  new_proj_deployment_name = args.new_proj_deployment_name[0]
+  new_proj_name = args.new_proj_name[0]
+  new_proj_org = args.new_proj_org[0]
+  new_proj_service_account_a = args.new_proj_service_account_a[0]
+  new_proj_service_account_b = args.new_proj_service_account_b[0]
+  new_proj_billing_account = args.new_proj_billing_account[0]
+  new_proj_account_to_create = args.new_proj_account_to_create[0]
 
-  host_project = args.host_project
+  host_project = args.host_project[0]
   create_new_project = args.create_new_project
   project_name = new_proj_name if create_new_project else host_project
-  default_zone = args.default_zone
+  default_zone = args.default_zone[0]
   ssh_tunnel_port = args.ssh_tunnel_port
   
   unittest.main()
