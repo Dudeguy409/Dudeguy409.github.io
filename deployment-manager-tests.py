@@ -34,6 +34,23 @@ import yaml
 import argparse
 import sys
 
+  new_proj_deployment_name = None
+  new_proj_name = None
+  new_proj_org = None
+  new_proj_service_account_a = None
+  new_proj_service_account_b = None
+  new_proj_billing_account = None
+  new_proj_account_to_create = None
+
+  host_project = None
+  create_new_project = None
+  project_name = None
+  default_zone = None
+  ssh_tunnel_port = None
+
+  environment = {"default_zone": default_zone, "project_name": project_name}
+  command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
+
 with open("simple_tests.yaml", 'r') as stream:
   tests = yaml.load(stream)
 
@@ -434,8 +451,5 @@ if __name__ == "__main__":
   project_name = project_to_create if create_new_project else host_project
   default_zone = args.default_zone
   ssh_tunnel_port = args.ssh_tunnel_port
-
-  environment = {"default_zone": default_zone, "project_name": project_name}
-  command_types = {"CREATE": "create", "DELETE": "delete", "UPDATE": "update", "DESCRIBE": "describe"}
   
   unittest.main()
