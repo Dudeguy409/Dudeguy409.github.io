@@ -13,25 +13,19 @@
 # limitations under the License.
 """A program that automatically tests that the Deployment Manager examples work.
 
-This is a nose test program that checks that all of the GitHub examples for the
+This is a test program that checks that all of the GitHub examples for the
 Google Cloud Platform's Deployment Manager are being deployed correctly.  These
 tests should detect breaking changes in the example code and breaking changes
 in the uderlying APIs that the examples use.  This program can be run locally on
-your machine as long as your Google Cloud SDK has been installed and configured,
-and you have installed the nose python testing framework.  To run this test from
-the command line, try:
-nosetests -v -s deployment-manager-tests.py
-In order to create a temporary project in which to create and delete these test
-deployments, follow the instructions in the project creation github example:
-https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
-Then, before running the tests, set the environment variables for your specific
-project.  If "DEPLOYMENT_MANAGER_TEST_CREATE_NEW_PROJECT" is set to "TRUE", the
-tests will be run in a new project.  If not, they will be run in your default
-configured project.
+your machine as long as your Google Cloud SDK has been installed and configured, 
+and you have installed all of the necessary python packages.
+
+For information on how to run these tests, try:
+
+python deployment-manager-tests.py -h
 """
 
 import json
-import os
 import parameterized
 import subprocess
 import time
@@ -428,7 +422,12 @@ if __name__ == "__main__":
   sys.argv[1:] = []
   
   # TODO(davidsac) Consider removing the description here or above
-  #  Please see the example instructions on GitHub to see what value to assign each variable: https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/examples/v2/project_creation/README.md
+  
+  """
+  In order to create a temporary project in which to create and delete these test
+  deployments, follow the prerequisite instructions in the project creation github example (steps 1-6):
+  https://github.com/GoogleCloudPlatform/deploymentmanager-samples/tree/master/examples/v2/project_creation
+  Then, supply the necessary arguments through the command line"""
   project_deployment_name = args.new_proj_deployment_name
   project_to_create = args.new_proj_name
   organization = args.new_proj_org
