@@ -75,7 +75,7 @@ def parse_instances(deployment_name, project, resource_type_to_parse="compute.v1
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
-                       + deployment_name + " --project=" + project + "--format=json")
+                       + deployment_name + " --project=" + project + " --format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == resource_type_to_parse:
