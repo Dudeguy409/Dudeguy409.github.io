@@ -75,7 +75,7 @@ def parse_instances(deployment_name, project, resource_type_to_parse="compute.v1
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
-                       + deployment_name + " --project=" + project +"--format=json")
+                       + deployment_name + " --project=" + project + "--format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == resource_type_to_parse:
@@ -204,16 +204,18 @@ class TestSimpleDeployment(unittest.TestCase):
 
   @parameterized.parameterized.expand(tests)
   def test_sequence(self, deployment_name, parameters):
+
     if parameters.get("replace-placeholders"):
       for replacement in parameters.get("replace-placeholders"):
         replace_with = replacement["replace-with"]
         if environment.get(replace_with):
           replace_with = environment.get(replace_with)
         replace_placeholder_in_file(replacement["search-for"], replace_with, replacement["file-to-modify"])
+
     if parameters.get("http-server"):
-      deploy_http_server(deployment_name, parameters["config-path"])
+      deploy_http_server(deployment_name, parameters["config-path"], project_name)
     else:
-      deploy(deployment_name, parameters["config-path"])
+      deploy(deployment_name, parameters["config-path"], project_name)
 
 
 class TestComplexDeployment(unittest.TestCase):
@@ -223,53 +225,53 @@ class TestComplexDeployment(unittest.TestCase):
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
-                      "/jinja/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-jinja")
+                      "/jinja/config-with-many-templates.yaml", project_name)
+    check_deployment("step-by-step-8-9-jinja", project_name)
 
-    parsed_instances = parse_instances("step-by-step-8-9-jinja")
+    parsed_instances = parse_instances("step-by-step-8-9-jinja", project_name)
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name,
-      #                                ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip, project_name)
       pass
 
-    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-jinja")
+    update_deployment("step-by-step-8-9-jinja", "step_by_step_guide/step9_update_a_deployment/jinja/config-with-many-templates.yaml", project_name)
+    check_deployment("step-by-step-8-9-jinja", project_name)
     
-    parsed_instances = parse_instances("step-by-step-8-9-jinja")
+    parsed_instances = parse_instances("step-by-step-8-9-jinja", project_name)
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.
       # Note that the instances are in us-central1-f.
       call("gcloud compute instances reset " + instance_name + " --project="
            + project_name + " --zone="+parsed_instances[instance_name]["zone"])
-      # rslt = get_instance_index_page(instance_name, port, ip)
+      # rslt = get_instance_index_page(instance_name, port, ip, project_name)
 
-    delete_deployment("step-by-step-8-9-jinja")
+    delete_deployment("step-by-step-8-9-jinja", project_name)
 
   def test_step_by_step_8_9_python(self):
 
     create_deployment("step-by-step-8-9-python",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
-                      "/python/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-python")
-    parsed_instances = parse_instances("step-by-step-8-9-python")
+                      "/python/config-with-many-templates.yaml", project_name)
+    check_deployment("step-by-step-8-9-python", project_name)
+    parsed_instances = parse_instances("step-by-step-8-9-python", project_name)
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name,
-      #                                ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip, project_name)
       pass
 
-    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml")
-    check_deployment("step-by-step-8-9-python")
+    update_deployment("step-by-step-8-9-python", "step_by_step_guide/step9_update_a_deployment/python/config-with-many-templates.yaml", project_name)
+    check_deployment("step-by-step-8-9-python", project_name)
 
-    parsed_instances = parse_instances("step-by-step-8-9-python")
+    parsed_instances = parse_instances("step-by-step-8-9-python", project_name)
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.
       # Note that the instances are in us-central1-f.
       call("gcloud compute instances reset " + instance_name + " --project="
            + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name,
-      #                                ssh_tunnel_port, ip)
+      #                                ssh_tunnel_port, ip, project_name)
 
-    delete_deployment("step-by-step-8-9-python")
+    delete_deployment("step-by-step-8-9-python", project_name)
 
   def test_nodejs_l7_jinja(self):
     """Tests that the jinja NodeJS L7 application deploys correctly."""
@@ -279,8 +281,8 @@ class TestComplexDeployment(unittest.TestCase):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
                                 "nodejs_l7/jinja/application.yaml")
     deployment_name = "nodejs-l7-jinja"
-    create_deployment(deployment_name, "nodejs_l7/jinja/application.yaml")
-    check_deployment(deployment_name)
+    create_deployment(deployment_name, "nodejs_l7/jinja/application.yaml", project_name)
+    check_deployment(deployment_name, project_name)
     # TODO(davidsac) all the steps specifically mentioned in the readme
     # are performed, but perhaps there are still more things to be done
     # to check that it works?
@@ -298,7 +300,7 @@ class TestComplexDeployment(unittest.TestCase):
       raise Exception("no forwarding rule found")
     else:
       print forwarding_rule
-    delete_deployment(deployment_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_nodejs_l7_python(self):
     """Tests that the python NodeJS L7 application deploys correctly."""
@@ -308,8 +310,8 @@ class TestComplexDeployment(unittest.TestCase):
     replace_placeholder_in_file("ZONE_TO_RUN", default_zone,
                                 "nodejs_l7/python/application.yaml")
     deployment_name = "nodejs-l7-python"
-    create_deployment(deployment_name, "nodejs_l7/python/application.yaml")
-    check_deployment(deployment_name)
+    create_deployment(deployment_name, "nodejs_l7/python/application.yaml", project_name)
+    check_deployment(deployment_name, project_name)
     # TODO(davidsac) all the steps specifically mentioned in the readme
     # are performed, but perhaps there are still more things to be done
     # to check that it works?
@@ -327,51 +329,51 @@ class TestComplexDeployment(unittest.TestCase):
       raise Exception("no forwarding rule found")
     else:
       print forwarding_rule
-    delete_deployment(deployment_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_image_based_igm_jinja(self):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-jinja"
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", properties=
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.jinja", project_name, properties=
                       "\"targetSize:3,zone:" + default_zone
                       + ",maxReplicas:5\"")
-    check_deployment(deployment_name)
-    delete_deployment(deployment_name)
+    check_deployment(deployment_name, project_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_image_based_igm_python(self):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
     deployment_name = "image-based-igm-python"
-    create_deployment(deployment_name, "image_based_igm/image_based_igm.py", properties=
+    create_deployment(deployment_name, "image_based_igm/image_based_igm.py", project_name, properties=
                       "\"targetSize:3,zone:" + default_zone
                       + ",maxReplicas:5\"")
-    check_deployment(deployment_name)
-    delete_deployment(deployment_name)
+    check_deployment(deployment_name, project_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
     deployment_name = "igm-updater-jinja"
-    create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml")
-    check_deployment(deployment_name)
+    create_deployment(deployment_name, "igm-updater/jinja/frontendver1.yaml", project_name)
+    check_deployment(deployment_name, project_name)
     update_rolling_update_deployment(deployment_name,
-                                "igm-updater/jinja/frontendver2.yaml")
+                                "igm-updater/jinja/frontendver2.yaml", project_name)
     update_rolling_update_deployment(deployment_name,
-                                "igm-updater/jinja/frontendver3.yaml")
-    delete_deployment(deployment_name)
+                                "igm-updater/jinja/frontendver3.yaml", project_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
     deployment_name = "igm-updater-python"
-    create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml")
-    check_deployment(deployment_name)
+    create_deployment(deployment_name, "igm-updater/python/frontendver1.yaml", project_name)
+    check_deployment(deployment_name, project_name)
     update_rolling_update_deployment(deployment_name,
-                                "igm-updater/python/frontendver2.yaml")
+                                "igm-updater/python/frontendver2.yaml", project_name)
     update_rolling_update_deployment(deployment_name,
-                                "igm-updater/python/frontendver3.yaml")
-    delete_deployment(deployment_name)
+                                "igm-updater/python/frontendver3.yaml", project_name)
+    delete_deployment(deployment_name, project_name)
 
   def test_htcondor(self):
     # TODO(davidsac) read the tutorial and figure out how to deploy this
