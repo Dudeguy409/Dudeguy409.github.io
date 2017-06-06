@@ -71,11 +71,11 @@ def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
        + "/' " + file_to_modify)
 
 
-def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance"):
+def parse_instances(deployment_name, project, resource_type_to_parse="compute.v1.instance"):
   """Creates a map of a deployment's GCE instances and associated IPs."""
   instance_map = {}
   raw_resources = call("gcloud deployment-manager resources list --deployment "
-                       + deployment_name + " --project=" + project_name +"--format=json")
+                       + deployment_name + " --project=" + project +"--format=json")
   parsed_resources = json.loads(raw_resources)
   for resource in parsed_resources:
     if resource["type"] == resource_type_to_parse:
@@ -83,21 +83,21 @@ def parse_instances(deployment_name, resource_type_to_parse="compute.v1.instance
       zone = parsed_properties["zone"]
       instance_map[resource["name"]] = {"zone": zone}
   for name in instance_map:
-    instance_map[name]["ip"] = call("gcloud compute instances describe " + name + " --project=" + project_name + " --zone=" + instance_map[name]["zone"] + " | grep \"networkIP\" | sed 's/networkIP: //'")
+    instance_map[name]["ip"] = call("gcloud compute instances describe " + name + " --project=" + project + " --zone=" + instance_map[name]["zone"] + " | grep \"networkIP\" | sed 's/networkIP: //'")
   return instance_map
 
 
-def get_instance_index_page(instance_name, local_port, ip):
+def get_instance_index_page(instance_name, local_port, ip, project):
   # TODO(davidsac) get this working
   """ call("gcloud compute ssh user@" + instance_name + " --zone "
           + default_zone + " -- -N -L " + str(local_port).strip() + ":"
-          + str(ip).strip() + ":8080")
+          + str(ip).strip() + ":8080" + " --project="+project)
   
   return call("curl http://localhost:" + str(local_port))"""
   return "This is not a real page"
 
 
-def gcloud_dm_command(command_type, deployment_name, project=project_name, properties=None, config_path=None):
+def gcloud_dm_command(command_type, deployment_name, project, properties=None, config_path=None):
   command = "gcloud deployment-manager deployments "+command_types[command_type]+" "+deployment_name+ " --project=" + project + " --format=json -q"
   if config_path:
     command += " --config " + config_path
@@ -106,21 +106,21 @@ def gcloud_dm_command(command_type, deployment_name, project=project_name, prope
   return call(command)
 
 
-def create_deployment(deployment_name, config_path, project=project_name, properties=None):
+def create_deployment(deployment_name, config_path, project, properties=None):
   """Attempts to create a deployment."""
   print "Creating deployment of " + deployment_name + "..."
   gcloud_dm_command("CREATE", deployment_name, project, properties, config_path)
   print "Deployment created."
 
 
-def update_deployment(deployment_name, config_path, project=project_name, properties=None):
+def update_deployment(deployment_name, config_path, project, properties=None):
   """Attempts to update a deployment."""
   print "Updating deployment of " + deployment_name + "..."
   gcloud_dm_command("UPDATE", deployment_name, project, properties, config_path)
   print "Deployment updated."
 
 
-def check_deployment(deployment_name, project=project_name):
+def check_deployment(deployment_name, project):
   raw_deployment = gcloud_dm_command("DESCRIBE", deployment_name, project)
   parsed_deployment = json.loads(raw_deployment)
   if parsed_deployment.get("deployment").get("operation").get("error"):
@@ -129,13 +129,13 @@ def check_deployment(deployment_name, project=project_name):
                     + raw_deployment + "---END DESCRIPTION---")
 
 
-def delete_deployment(deployment_name, project=project_name):
+def delete_deployment(deployment_name, project):
   print "Deleting deployment of " + deployment_name + "..."
   gcloud_dm_command("DELETE", deployment_name, project)
   print "Deployment deleted."
 
 
-def update_rolling_update_deployment(deployment_name, config_path, project=project_name):
+def update_rolling_update_deployment(deployment_name, config_path, project):
   max_number_of_attempts = 3
   number_of_attempts = 0
   while max_number_of_attempts > number_of_attempts:
@@ -151,7 +151,7 @@ def update_rolling_update_deployment(deployment_name, config_path, project=proje
   number_of_attempts = 0
   while max_number_of_attempts > number_of_attempts:
     try:
-      check_deployment(deployment_name)
+      check_deployment(deployment_name, project)
       break
     except Exception as e:
       if "412" in e.message:
@@ -161,23 +161,23 @@ def update_rolling_update_deployment(deployment_name, config_path, project=proje
         raise e
 
 
-def deploy(deployment_name, config_path):
+def deploy(deployment_name, config_path, project):
   """Attempts to create and delete a deployment, raising any errors."""
-  create_deployment(deployment_name, config_path)
-  check_deployment(deployment_name)
-  delete_deployment(deployment_name)
+  create_deployment(deployment_name, config_path, project)
+  check_deployment(deployment_name, project)
+  delete_deployment(deployment_name, project)
 
 
-def deploy_http_server(deployment_name, config_path):
+def deploy_http_server(deployment_name, config_path, project):
   """Tests deployments with GCE instances that host servers."""
-  create_deployment(deployment_name, config_path)
-  check_deployment(deployment_name)
-  parsed_instances = parse_instances(deployment_name)
+  create_deployment(deployment_name, config_path, project)
+  check_deployment(deployment_name, project)
+  parsed_instances = parse_instances(deployment_name, project)
   for instance_name in parsed_instances:
     page = get_instance_index_page(instance_name, ssh_tunnel_port,
-                                   parsed_instances[instance_name]["ip"])
+                                   parsed_instances[instance_name]["ip"], project)
     # TODO(davidsac) assert that the value is what is expected
-  delete_deployment(deployment_name)
+  delete_deployment(deployment_name, project)
 
 
 def setUpModule():
@@ -438,13 +438,20 @@ if __name__ == "__main__":
   args = parser.parse_args()
   sys.argv[1:] = []
 
-  new_proj_deployment_name = args.new_proj_deployment_name[0]
-  new_proj_name = args.new_proj_name[0]
-  new_proj_org = args.new_proj_org[0]
-  new_proj_service_account_a = args.new_proj_service_account_a[0]
-  new_proj_service_account_b = args.new_proj_service_account_b[0]
-  new_proj_billing_account = args.new_proj_billing_account[0]
-  new_proj_account_to_create = args.new_proj_account_to_create[0]
+  if args.new_proj_deployment_name:
+    new_proj_deployment_name = args.new_proj_deployment_name[0]
+  if args.new_proj_name:
+    new_proj_name = args.new_proj_name[0]
+  if args.new_proj_org:
+    new_proj_org = args.new_proj_org[0]
+  if args.new_proj_service_account_a:
+    new_proj_service_account_a = args.new_proj_service_account_a[0]
+  if args.new_proj_service_account_b:
+    new_proj_service_account_b = args.new_proj_service_account_b[0]
+  if args.new_proj_billing_account:
+    new_proj_billing_account = args.new_proj_billing_account[0]
+  if args.new_proj_account_to_create:
+    new_proj_account_to_create = args.new_proj_account_to_create[0]
 
   host_project = args.host_project[0]
   create_new_project = args.create_new_project
