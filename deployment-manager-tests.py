@@ -416,7 +416,7 @@ class TestComplexDeployment(unittest.TestCase):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-''''
+'''
 
 if __name__ == "__main__":
   
