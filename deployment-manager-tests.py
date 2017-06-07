@@ -216,7 +216,7 @@ class TestSimpleDeployment(unittest.TestCase):
       deploy_http_server(deployment_name, parameters["config-path"], project_name)
     else:
       deploy(deployment_name, parameters["config-path"], project_name)
-'''
+
 
 class TestComplexDeployment(unittest.TestCase):
   """A test class for complex deployments needing post-deployment interaction.
@@ -416,7 +416,7 @@ class TestComplexDeployment(unittest.TestCase):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-'''
+
 
 if __name__ == "__main__":
   
