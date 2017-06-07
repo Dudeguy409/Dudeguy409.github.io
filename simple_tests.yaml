@@ -1,2 +1,226 @@
+- - build-config-vm
+  - config-path: build_configuration/vm.yaml
+
+- - build-config-vm-and-bigquery
+  - config-path: build_configuration/vm_and_bigquery.yaml
+
+- - step-by-step-7-jinja
+  - config-path: step_by_step_guide/step7_use_environment_variables/jinja/config-with-many-templates.yaml
+
+- - step-by-step-7-python
+  - config-path: step_by_step_guide/step7_use_environment_variables/python/config-with-many-templates.yaml
+
+- - build-config-add-templates-jinja
+  - config-path: build_configuration/add_templates/jinja/use_vm_template.yaml
+
+- - build-config-add-templates-python
+  - config-path: build_configuration/add_templates/python/use_vm_template.yaml
+
+- - build-config-use-outputs
+  - config-path: build_configuration/use_outputs/use_template_with_outputs.yaml
+
+- - build-config-explicit-dependencies
+  - config-path: build_configuration/explicit_dependencies/backend_frontend_instances.yaml
+
+- - vm-with-disks-jinja
+  - config-path: vm_with_disks/jinja/vm_with_disks.yaml
+
+- - vm-with-disks-python
+  - config-path: vm_with_disks/python/vm_with_disks.yaml
+
+- - container-igm-jinja
+  - config-path: container_igm/jinja/container_igm.yaml
+
+- - container-igm-python
+  - config-path: container_igm/python/container_igm.yaml
+
+# TODO(davidsac):  The tests below are somewhat complex.  
+# I may need to create more complex tests to make sure that they are deployed correctly.
+
+- - ssl
+  - config-path: ssl/ssl.yaml
+
+- - regional-igm
+  - config-path: regional_igm/regional_igm.yaml
+
 - - iam
   - config-path: iam/jinja/accessible_resource.yaml
+
+- - instance-pool-jinja
+  - config-path: instance_pool/jinja/instance-pool.yaml
+
+- - instance-pool-python
+  - config-path: instance_pool/python/instance-pool.yaml
+
+- - internal-lb
+  - config-path: internal_lb/python/config.yaml
+
+# TODO(davidsac) figure out a better way to pass in zone to tests?
+
+- - waiter
+  - config-path: waiter/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: waiter/config.yaml
+
+- - quick-start
+  - config-path: quick_start/vm.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: quick_start/vm.yaml
+      - search-for: "\\[FAMILY_NAME\\]"
+        replace-with: debian-8
+        file-to-modify: quick_start/vm.yaml
+
+- - step-by-step-2
+  - config-path: step_by_step_guide/step2_create_a_configuration/two-vms.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step2_create_a_configuration/two-vms.yaml
+
+- - step-by-step-4
+  - config-path: step_by_step_guide/step4_use_references/two-vms.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step4_use_references/two-vms.yaml
+
+- - step-by-step-5-jinja
+  - config-path: step_by_step_guide/step5_create_a_template/jinja/two-vms.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/jinja/vm-template.jinja
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/jinja/vm-template-2.jinja
+
+- - step-by-step-5-python
+  - config-path: step_by_step_guide/step5_create_a_template/python/two-vms.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template.py
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step5_create_a_template/python/vm-template-2.py
+
+- - step-by-step-6-jinja
+  - config-path: step_by_step_guide/step6_use_multiple_templates/jinja/config-with-many-templates.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/jinja/vm-template.jinja
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/jinja/vm-template-2.jinja
+
+- - step-by-step-6-python
+  - config-path: step_by_step_guide/step6_use_multiple_templates/python/config-with-many-templates.yaml
+    replace-placeholders:
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/python/vm-template.py
+      - search-for: "\\[MY_PROJECT\\]"
+        replace-with: project_name
+        file-to-modify: step_by_step_guide/step6_use_multiple_templates/python/vm-template-2.py
+
+- - single-vm-jinja
+  - config-path: single_vm/jinja/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: single_vm/jinja/vm.yaml
+
+- - single-vm-python
+  - config-path: single_vm/python/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: single_vm/python/vm.yaml
+
+- - container-vm-jinja
+  - config-path: container_vm/jinja/container_vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: container_vm/jinja/container_vm.yaml
+
+- - container-vm-python
+  - config-path: container_vm/python/container_vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: container_vm/python/container_vm.yaml
+
+- - nodejs-jinja
+  - config-path: nodejs/jinja/nodejs.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: nodejs/jinja/nodejs.yaml
+
+- - nodejs-python
+  - config-path: nodejs/python/nodejs.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: nodejs/python/nodejs.yaml
+
+- - vm-startup-script-jinja
+  - config-path: vm_startup_script/jinja/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: vm_startup_script/jinja/vm.yaml
+    http-server: true
+
+- - vm-startup-script-python
+  - config-path: vm_startup_script/python/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: vm_startup_script/python/vm.yaml
+    http-server: true
+
+- - metadata-from-file-jinja
+  - config-path: metadata_from_file/jinja/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: metadata_from_file/jinja/config.yaml
+    http-server: true
+
+- - metadata-from-file-python
+  - config-path: metadata_from_file/python/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: metadata_from_file/python/config.yaml
+    http-server: true
+
+- - int-lb-hap-j
+  - config-path: internal_lb_haproxy/jinja/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/jinja/config.yaml
+
+# TODO(davidsac): There are two copies of the python files it seems.
+# Which ones are the most up-to-date?
+- - int-lb-hap-p-a
+  - config-path: internal_lb_haproxy/python/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/python/config.yaml
+
+- - int-lb-hap-p-b
+  - config-path: internal_lb_haproxy/config.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: internal_lb_haproxy/config.yaml
