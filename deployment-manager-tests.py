@@ -322,8 +322,9 @@ class TestComplexDeployment(unittest.TestCase):
          + deployment_name
          + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
          + secondary_zone + " --project=" + project_name)
-    forwarding_rule = call("gcloud compute forwarding-rules list | grep "
-                           + deployment_name + "-application-l7lb")
+    forwarding_rule = call("gcloud compute forwarding-rules list --project="
+                           + project_name 
+                           + " | grep " + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
     else:
@@ -352,8 +353,9 @@ class TestComplexDeployment(unittest.TestCase):
          + deployment_name
          + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
          + secondary_zone + " --project=" + project_name)
-    forwarding_rule = call("gcloud compute forwarding-rules list | grep "
-                           + deployment_name + "-application-l7lb")
+    forwarding_rule = call("gcloud compute forwarding-rules list --project=" 
+                           + project_name 
+                           + " | grep " + deployment_name + "-application-l7lb")
     if not forwarding_rule:
       raise Exception("no forwarding rule found")
     else:
