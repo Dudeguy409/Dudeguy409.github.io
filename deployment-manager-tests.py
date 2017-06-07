@@ -317,11 +317,11 @@ class TestComplexDeployment(unittest.TestCase):
     call("gcloud compute instance-groups unmanaged set-named-ports "
          + deployment_name
          + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone "
-         + default_zone)
+         + default_zone + " --project=" + project_name)
     call("gcloud compute instance-groups unmanaged set-named-ports "
          + deployment_name
          + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
-         + secondary_zone)
+         + secondary_zone + " --project=" + project_name)
     forwarding_rule = call("gcloud compute forwarding-rules list | grep "
                            + deployment_name + "-application-l7lb")
     if not forwarding_rule:
@@ -347,11 +347,11 @@ class TestComplexDeployment(unittest.TestCase):
     call("gcloud compute instance-groups unmanaged set-named-ports "
          + deployment_name
          + "-frontend-pri-igm --named-ports http:8080,httpstatic:8080 --zone "
-         + default_zone)
+         + default_zone + " --project=" + project_name)
     call("gcloud compute instance-groups unmanaged set-named-ports "
          + deployment_name
          + "-frontend-sec-igm --named-ports http:8080,httpstatic:8080 --zone "
-         + secondary_zone)
+         + secondary_zone + " --project=" + project_name)
     forwarding_rule = call("gcloud compute forwarding-rules list | grep "
                            + deployment_name + "-application-l7lb")
     if not forwarding_rule:
