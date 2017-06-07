@@ -19,6 +19,7 @@ tests should detect breaking changes in the example code and breaking changes
 in the uderlying APIs that the examples use.  This program can be run locally on
 your machine as long as your Google Cloud SDK has been installed and configured,
 and you have installed all of the necessary python packages.
+
 For information on how to run these tests, try:
 
 python deployment-manager-tests.py -h
