@@ -12,16 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A program that automatically tests that the Deployment Manager examples work.
-
 This is a test program that checks that all of the GitHub examples for the
 Google Cloud Platform's Deployment Manager are being deployed correctly.  These
 tests should detect breaking changes in the example code and breaking changes
 in the uderlying APIs that the examples use.  This program can be run locally on
 your machine as long as your Google Cloud SDK has been installed and configured,
 and you have installed all of the necessary python packages.
-
 For information on how to run these tests, try:
-
 python deployment-manager-tests.py -h
 """
 
@@ -56,12 +53,6 @@ command_types = {"CREATE": "create", "DELETE": "delete",
 with open("simple_tests.yaml", "r") as stream:
   tests = yaml.load(stream)
 
-class CustomCalledProcessError(Exception):
-
-  def __init__(self, cmd, output, returncode):
-    message = "Command '" + cmd +"' returned non-zero exit status " + str(returncode) + " and output:\n" + output
-    super(CustomCalledProcessError, self).__init__(message)
-
 
 def call(command):
   """Runs the command and returns the output, possibly as an exception."""
@@ -70,9 +61,8 @@ def call(command):
     result = subprocess.check_output(command,
                                      shell=True, stderr=subprocess.STDOUT)
     return result
-  # raise a useful error message
   except subprocess.CalledProcessError as e:
-    raise CustomCalledProcessError(e.cmd, e.output, e.returncode)
+    raise Exception(e.output)
 
 
 def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
@@ -108,7 +98,6 @@ def get_instance_index_page(instance_name, local_port, ip, project):
   call("gcloud compute ssh user@" + instance_name + " --zone "
           + default_zone + " -- -N -L " + str(local_port).strip() + ":"
           + str(ip).strip() + ":8080" + " --project="+project)
-
   return call("curl http://localhost:" + str(local_port))
   """
   return "This is not a real page"
@@ -156,8 +145,30 @@ def delete_deployment(deployment_name, project):
 
 
 def update_rolling_update_deployment(deployment_name, config_path, project):
-  update_deployment(deployment_name, config_path, project)  
-  check_deployment(deployment_name, project)
+  max_number_of_attempts = 3
+  number_of_attempts = 0
+  while max_number_of_attempts > number_of_attempts:
+    try:
+      update_deployment(deployment_name, config_path, project)
+      break
+    except Exception as e:
+      if "412" in e.message:
+        time.sleep(600)
+        number_of_attempts += 1
+      else:
+        raise e
+  number_of_attempts = 0
+  while max_number_of_attempts > number_of_attempts:
+    try:
+      check_deployment(deployment_name, project)
+      break
+    except Exception as e:
+      if "412" in e.message:
+        time.sleep(600)
+        number_of_attempts += 1
+      else:
+        raise e
+
 
 def deploy(deployment_name, config_path, project):
   """Attempts to create and delete a deployment, raising any errors."""
@@ -198,10 +209,9 @@ def tearDownModule():
   if create_new_project:
     delete_deployment(new_proj_deployment_name, host_project)
 
-'''
+
 class TestSimpleDeployment(unittest.TestCase):
   """A test class for simple deployments.
-
   This is a test class for simple deployments that only need to be deployed in
   order to be considered working successfully.  It is not for deployments that
   need to be interacted with after being deployed in order to ensure that they
@@ -224,12 +234,12 @@ class TestSimpleDeployment(unittest.TestCase):
                          parameters["config-path"], project_name)
     else:
       deploy(deployment_name, parameters["config-path"], project_name)
-'''
+
 
 class TestComplexDeployment(unittest.TestCase):
   """A test class for complex deployments needing post-deployment interaction.
   """
-  '''
+
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
@@ -366,7 +376,7 @@ class TestComplexDeployment(unittest.TestCase):
                       + default_zone + ",maxReplicas:5\"")
     check_deployment(deployment_name, project_name)
     delete_deployment(deployment_name, project_name)
-  '''
+
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
@@ -381,7 +391,7 @@ class TestComplexDeployment(unittest.TestCase):
                                      "igm-updater/jinja/frontendver3.yaml",
                                      project_name)
     delete_deployment(deployment_name, project_name)
-  '''
+
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
@@ -427,7 +437,7 @@ class TestComplexDeployment(unittest.TestCase):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-  '''
+
 
 if __name__ == "__main__":
 
