@@ -56,6 +56,12 @@ command_types = {"CREATE": "create", "DELETE": "delete",
 with open("simple_tests.yaml", "r") as stream:
   tests = yaml.load(stream)
 
+class CustomCalledProcessError(Exception):
+
+  def __init__(self, cmd, output, returncode):
+    message = "Command '" + cmd +"' returned non-zero exit status " + str(returncode) + " and output:\n" + output
+    super(CustomCalledProcessError, self).__init__(message)
+
 
 def call(command):
   """Runs the command and returns the output, possibly as an exception."""
@@ -66,7 +72,7 @@ def call(command):
     return result
   # raise a useful error message
   except subprocess.CalledProcessError as e:
-    raise subprocess.CalledProcessError(e.returncode, str(e) + e.output)
+    raise CustomCalledProcessError(e.cmd, e.output, e.returncode)
 
 
 def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
