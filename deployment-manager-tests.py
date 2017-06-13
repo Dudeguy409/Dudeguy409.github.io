@@ -149,30 +149,8 @@ def delete_deployment(deployment_name, project):
 
 
 def update_rolling_update_deployment(deployment_name, config_path, project):
-  max_number_of_attempts = 3
-  number_of_attempts = 0
-  while max_number_of_attempts > number_of_attempts:
-    try:
-      update_deployment(deployment_name, config_path, project)
-      break
-    except Exception as e:
-      if "412" in e.message:
-        time.sleep(600)
-        number_of_attempts += 1
-      else:
-        raise e
-  number_of_attempts = 0
-  while max_number_of_attempts > number_of_attempts:
-    try:
-      check_deployment(deployment_name, project)
-      break
-    except Exception as e:
-      if "412" in e.message:
-        time.sleep(600)
-        number_of_attempts += 1
-      else:
-        raise e
-
+  update_deployment(deployment_name, config_path, project)  
+  check_deployment(deployment_name, project)
 
 def deploy(deployment_name, config_path, project):
   """Attempts to create and delete a deployment, raising any errors."""
