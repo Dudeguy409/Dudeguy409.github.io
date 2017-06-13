@@ -64,6 +64,7 @@ def call(command):
     result = subprocess.check_output(command,
                                      shell=True, stderr=subprocess.STDOUT)
     return result
+  # raise a useful error message
   except subprocess.CalledProcessError as e:
     raise subprocess.CalledProcessError(e.output)
 
