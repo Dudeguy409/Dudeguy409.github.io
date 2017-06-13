@@ -65,7 +65,7 @@ def call(command):
                                      shell=True, stderr=subprocess.STDOUT)
     return result
   except subprocess.CalledProcessError as e:
-    raise Exception(e.output)
+    raise subprocess.CalledProcessError(e.output)
 
 
 def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
