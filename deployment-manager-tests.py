@@ -52,6 +52,12 @@ command_types = {"CREATE": "create", "DELETE": "delete",
 
 with open("simple_tests.yaml", "r") as stream:
   tests = yaml.load(stream)
+  
+class CustomCalledProcessError(Exception):
+
+  def __init__(self, cmd, output, returncode):		
+    message = "Command '" + cmd +"' returned non-zero exit status " + str(returncode) + " and output:\n" + output		
+    super(CustomCalledProcessError, self).__init__(message)
 
 
 def call(command):
@@ -62,7 +68,7 @@ def call(command):
                                      shell=True, stderr=subprocess.STDOUT)
     return result
   except subprocess.CalledProcessError as e:
-    raise Exception(e.output)
+    raise CustomCalledProcessError(e.cmd, e.output, e.returncode)
 
 
 def replace_placeholder_in_file(search_for, replace_with, file_to_modify):
@@ -151,23 +157,19 @@ def update_rolling_update_deployment(deployment_name, config_path, project):
     try:
       update_deployment(deployment_name, config_path, project)
       break
-    except Exception as e:
+    except CustomCalledProcessError as e:
       if "412" in e.message:
         time.sleep(600)
         number_of_attempts += 1
-      else:
-        raise e
   number_of_attempts = 0
   while max_number_of_attempts > number_of_attempts:
     try:
       check_deployment(deployment_name, project)
       break
-    except Exception as e:
+    except CustomCalledProcessError as e:
       if "412" in e.message:
         time.sleep(600)
         number_of_attempts += 1
-      else:
-        raise e
 
 
 def deploy(deployment_name, config_path, project):
