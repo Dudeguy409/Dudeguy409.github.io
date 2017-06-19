@@ -1,3 +1,22 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Marketplace
+Gist
+ @Dudeguy409
+ Sign out
+ Unwatch 1
+  Star 0
+ Fork 1 Dudeguy409/Dudeguy409.github.io
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
+Tree: 9e07fe3f40 Find file Copy pathDudeguy409.github.io/simple_tests.yaml
+9e07fe3  12 days ago
+@Dudeguy409 Dudeguy409 Update simple_tests.yaml
+1 contributor
+RawBlameHistory    
+227 lines (186 sloc)  7.71 KB
 - - build-config-vm
   - config-path: build_configuration/vm.yaml
 
@@ -130,9 +149,17 @@
 
 - - single-vm-jinja
   - config-path: single_vm/jinja/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: single_vm/jinja/vm.yaml
 
 - - single-vm-python
   - config-path: single_vm/python/vm.yaml
+    replace-placeholders:
+      - search-for: ZONE_TO_RUN
+        replace-with: default_zone
+        file-to-modify: single_vm/python/vm.yaml
 
 - - container-vm-jinja
   - config-path: container_vm/jinja/container_vm.yaml
@@ -216,3 +243,5 @@
       - search-for: ZONE_TO_RUN
         replace-with: default_zone
         file-to-modify: internal_lb_haproxy/config.yaml
+Contact GitHub API Training Shop Blog About
+© 2017 GitHub, Inc. Terms Privacy Security Status Help
