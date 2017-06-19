@@ -130,17 +130,9 @@
 
 - - single-vm-jinja
   - config-path: single_vm/jinja/vm.yaml
-    replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: single_vm/jinja/vm.yaml
 
 - - single-vm-python
   - config-path: single_vm/python/vm.yaml
-    replace-placeholders:
-      - search-for: ZONE_TO_RUN
-        replace-with: default_zone
-        file-to-modify: single_vm/python/vm.yaml
 
 - - container-vm-jinja
   - config-path: container_vm/jinja/container_vm.yaml
