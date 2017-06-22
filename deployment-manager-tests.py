@@ -198,8 +198,7 @@ def setUpModule():
                   + new_proj_org
                   + "',BILLING_ACCOUNT:'" + new_proj_billing_account
                   + "',SERVICE_ACCOUNT_TO_CREATE:'" + new_proj_account_to_create
-                  + "',SERVICE_ACCOUNT_OWNER_A:" + new_proj_service_account_a
-                  + ",SERVICE_ACCOUNT_OWNER_B:" + new_proj_service_account_b
+                  + "',ACCOUNT_OWNERS:" + new_proj_service_account_a + " " + new_proj_service_account_b
                   + "\"")
     create_deployment(new_proj_deployment_name, "config-template.jinja",
                       host_project, properties)
