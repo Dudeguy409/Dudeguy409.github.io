@@ -19,3 +19,37 @@ info:
 
 imports:
 - path: project.py
+
+required:
+- ORGANIZATION_ID
+- PROJECT_NAME
+- BILLING_ACCOUNT
+- SERVICE_ACCOUNT_TO_CREATE
+- SERVICE_ACCOUNT_OWNER_A
+- SERVICE_ACCOUNT_OWNER_B
+
+properties:
+
+  ORGANIZATION_ID:
+    type: string
+    description: TODO
+
+  PROJECT_NAME:
+    type: string
+    description: TODO
+
+  BILLING_ACCOUNT:
+    type: string
+    description: TODO
+
+  SERVICE_ACCOUNT_TO_CREATE:
+    type: string
+    description: TODO
+
+  SERVICE_ACCOUNT_OWNER_A:
+    type: string
+    description: TODO
+
+  SERVICE_ACCOUNT_OWNER_B:
+    type: string
+    description: TODO
