@@ -489,7 +489,7 @@ if __name__ == "__main__":
   project_creation_args.add_argument("--new_proj_org", nargs=1,
                                      help="The organization in which to create "
                                      "the new project.")
-  project_creation_args.add_argument("--new_proj_service_accounts", nargs=+,
+  project_creation_args.add_argument("--new_proj_service_accounts", nargs='+',
                                      help="The service accounts to add "
                                      "to the new project, separated by spaces.")
 
