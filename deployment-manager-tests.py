@@ -210,7 +210,8 @@ def tearDownModule():
   call("rm -R -- */")
   if create_new_project:
     delete_deployment(new_proj_deployment_name, host_project)
-'''
+
+
 class TestSimpleDeployment(unittest.TestCase):
   """A test class for simple deployments.
   This is a test class for simple deployments that only need to be deployed in
@@ -218,8 +219,10 @@ class TestSimpleDeployment(unittest.TestCase):
   need to be interacted with after being deployed in order to ensure that they
   were deployed successfully.
   """
+
   @parameterized.parameterized.expand(tests)
   def test_sequence(self, deployment_name, parameters):
+
     if parameters.get("replace-placeholders"):
       for replacement in parameters.get("replace-placeholders"):
         replace_with = replacement["replace-with"]
@@ -227,30 +230,35 @@ class TestSimpleDeployment(unittest.TestCase):
           replace_with = environment.get(replace_with)
         replace_placeholder_in_file(replacement["search-for"],
                                     replace_with, replacement["file-to-modify"])
+
     if parameters.get("http-server"):
       deploy_http_server(deployment_name,
                          parameters["config-path"], project_name)
     else:
       deploy(deployment_name, parameters["config-path"], project_name)
-'''
+
+
 class TestComplexDeployment(unittest.TestCase):
   """A test class for complex deployments needing post-deployment interaction.
   """
-  '''
+
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
                       "/jinja/config-with-many-templates.yaml", project_name)
     check_deployment("step-by-step-8-9-jinja", project_name)
+
     parsed_instances = parse_instances("step-by-step-8-9-jinja", project_name)
     for instance_name in parsed_instances:
       # rslt = get_instance_index_page(instance_name,
       #                                ssh_tunnel_port, ip, project_name)
       pass
+
     update_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step9_update_a_deployment"
                       "/jinja/config-with-many-templates.yaml", project_name)
     check_deployment("step-by-step-8-9-jinja", project_name)
+
     parsed_instances = parse_instances("step-by-step-8-9-jinja", project_name)
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.
@@ -258,8 +266,11 @@ class TestComplexDeployment(unittest.TestCase):
       call("gcloud compute instances reset " + instance_name + " --project="
            + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name, port, ip, project_name)
+
     delete_deployment("step-by-step-8-9-jinja", project_name)
+
   def test_step_by_step_8_9_python(self):
+
     create_deployment("step-by-step-8-9-python",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
                       "/python/config-with-many-templates.yaml", project_name)
@@ -269,10 +280,12 @@ class TestComplexDeployment(unittest.TestCase):
       # rslt = get_instance_index_page(instance_name,
       #                                ssh_tunnel_port, ip, project_name)
       pass
+
     update_deployment("step-by-step-8-9-python",
                       "step_by_step_guide/step9_update_a_deployment"
                       "/python/config-with-many-templates.yaml", project_name)
     check_deployment("step-by-step-8-9-python", project_name)
+
     parsed_instances = parse_instances("step-by-step-8-9-python", project_name)
     for instance_name in parsed_instances:
       # Reset the instance before testing the server again.
@@ -281,7 +294,9 @@ class TestComplexDeployment(unittest.TestCase):
            + project_name + " --zone="+parsed_instances[instance_name]["zone"])
       # rslt = get_instance_index_page(instance_name,
       #                                ssh_tunnel_port, ip, project_name)
+
     delete_deployment("step-by-step-8-9-python", project_name)
+
   def test_nodejs_l7_jinja(self):
     """Tests that the jinja NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
@@ -312,6 +327,7 @@ class TestComplexDeployment(unittest.TestCase):
     else:
       print forwarding_rule
     delete_deployment(deployment_name, project_name)
+
   def test_nodejs_l7_python(self):
     """Tests that the python NodeJS L7 application deploys correctly."""
     secondary_zone = "us-central1-f"
@@ -342,6 +358,7 @@ class TestComplexDeployment(unittest.TestCase):
     else:
       print forwarding_rule
     delete_deployment(deployment_name, project_name)
+
   def test_image_based_igm_jinja(self):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
@@ -351,7 +368,7 @@ class TestComplexDeployment(unittest.TestCase):
                       + default_zone + ",maxReplicas:5\"")
     check_deployment(deployment_name, project_name)
     delete_deployment(deployment_name, project_name)
-  '''
+
   def test_image_based_igm_python(self):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
@@ -362,7 +379,6 @@ class TestComplexDeployment(unittest.TestCase):
     check_deployment(deployment_name, project_name)
     delete_deployment(deployment_name, project_name)
 
-  '''
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
@@ -377,6 +393,7 @@ class TestComplexDeployment(unittest.TestCase):
                                      "igm-updater/jinja/frontendver3.yaml",
                                      project_name)
     delete_deployment(deployment_name, project_name)
+
   def test_igm_updater_python(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
@@ -391,32 +408,38 @@ class TestComplexDeployment(unittest.TestCase):
                                      "igm-updater/python/frontendver3.yaml",
                                      project_name)
     delete_deployment(deployment_name, project_name)
+
   def test_htcondor(self):
     # TODO(davidsac) read the tutorial and figure out how to deploy this
     pass
+
   def test_common_jinja(self):
     # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
     # there are any deploymets here, just utility files for other deployments
     pass
+
   def test_common_python(self):
     # TODO(davidsac) do I need to add tests for these?  It doesn't seem like
     # there are any deploymets here, just utility files for other deployments
     pass
+
   def test_step_by_step_10_jinja(self):
     # TODO(davidsac) when I have time, read through this
     # example and make sure my test will deploy it correctly
     pass
+
   def test_step_by_step_10_python(self):
     # TODO(davidsac) when I have time, read through this
     # example and make sure my test will deploy it correctly
     pass
+
   def test_vpn_auto_subnet(self):
     # TODO(davidsac) How do I test this?
     # TODO(davidsac) figure out what values to use for the parameters
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-  '''
+
 
 if __name__ == "__main__":
 
