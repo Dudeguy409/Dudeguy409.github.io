@@ -38,5 +38,5 @@ resources:
         members:
         # Make sure to include the DM service account that is doing the deployment!
         {% for service_account in properties["ACCOUNT_OWNERS"] %}
-        - {{ service_account }}
+        - serviceAccount:{{ service_account }}
         {% endfor %}
