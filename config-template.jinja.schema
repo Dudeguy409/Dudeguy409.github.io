@@ -45,6 +45,6 @@ properties:
     type: string
     description: TODO
 
-  ACCOUNT_OWNERS:
+  SERVICE_ACCOUNT_OWNERS:
     type: string
     description: TODO
