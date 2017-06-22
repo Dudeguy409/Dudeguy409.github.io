@@ -35,8 +35,7 @@ import yaml
 new_proj_deployment_name = None
 new_proj_name = None
 new_proj_org = None
-new_proj_service_account_a = None
-new_proj_service_account_b = None
+new_proj_service_accounts = None
 new_proj_billing_account = None
 new_proj_account_to_create = None
 
@@ -198,7 +197,7 @@ def setUpModule():
                   + new_proj_org
                   + "',BILLING_ACCOUNT:'" + new_proj_billing_account
                   + "',SERVICE_ACCOUNT_TO_CREATE:'" + new_proj_account_to_create
-                  + "',ACCOUNT_OWNERS:" + new_proj_service_account_a + " " + new_proj_service_account_b
+                  + "',SERVICE_ACCOUNT_OWNERS:" + " ".join(new_proj_service_accounts)
                   + "\"")
     create_deployment(new_proj_deployment_name, "config-template.jinja",
                       host_project, properties)
@@ -490,12 +489,9 @@ if __name__ == "__main__":
   project_creation_args.add_argument("--new_proj_org", nargs=1,
                                      help="The organization in which to create "
                                      "the new project.")
-  project_creation_args.add_argument("--new_proj_service_account_a", nargs=1,
-                                     help="The first service account to add "
-                                     "to the new project.")
-  project_creation_args.add_argument("--new_proj_service_account_b", nargs=1,
-                                     help="The second service account to add "
-                                     "to the new project.")
+  project_creation_args.add_argument("--new_proj_service_accounts", nargs=+,
+                                     help="The service accounts to add "
+                                     "to the new project, separated by spaces.")
 
   args = parser.parse_args()
   sys.argv[1:] = []
@@ -506,10 +502,8 @@ if __name__ == "__main__":
     new_proj_name = args.new_proj_name[0]
   if args.new_proj_org:
     new_proj_org = args.new_proj_org[0]
-  if args.new_proj_service_account_a:
-    new_proj_service_account_a = args.new_proj_service_account_a[0]
-  if args.new_proj_service_account_b:
-    new_proj_service_account_b = args.new_proj_service_account_b[0]
+  if args.new_proj_service_accounts:
+    new_proj_service_accounts = args.new_proj_service_accounts
   if args.new_proj_billing_account:
     new_proj_billing_account = args.new_proj_billing_account[0]
   if args.new_proj_account_to_create:
