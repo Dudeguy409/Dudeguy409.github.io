@@ -210,8 +210,7 @@ def tearDownModule():
   call("rm -R -- */")
   if create_new_project:
     delete_deployment(new_proj_deployment_name, host_project)
-
-
+'''
 class TestSimpleDeployment(unittest.TestCase):
   """A test class for simple deployments.
   This is a test class for simple deployments that only need to be deployed in
@@ -236,12 +235,11 @@ class TestSimpleDeployment(unittest.TestCase):
                          parameters["config-path"], project_name)
     else:
       deploy(deployment_name, parameters["config-path"], project_name)
-
-
+'''
 class TestComplexDeployment(unittest.TestCase):
   """A test class for complex deployments needing post-deployment interaction.
   """
-
+  '''
   def test_step_by_step_8_9_jinja(self):
     create_deployment("step-by-step-8-9-jinja",
                       "step_by_step_guide/step8_metadata_and_startup_scripts"
@@ -368,7 +366,7 @@ class TestComplexDeployment(unittest.TestCase):
                       + default_zone + ",maxReplicas:5\"")
     check_deployment(deployment_name, project_name)
     delete_deployment(deployment_name, project_name)
-
+  '''
   def test_image_based_igm_python(self):
     # TODO(davidsac) this deployment has some more complex features like an
     # IGM and Autoscaler that may need to be tested more thoroughly
@@ -379,6 +377,7 @@ class TestComplexDeployment(unittest.TestCase):
     check_deployment(deployment_name, project_name)
     delete_deployment(deployment_name, project_name)
 
+  '''
   def test_igm_updater_jinja(self):
     # TODO(davidsac):  This is a pretty complex example.  It may be necessary
     # to more thoroughly check that it works
@@ -439,7 +438,7 @@ class TestComplexDeployment(unittest.TestCase):
     # deploy("vpn-auto-subnet", "vpn-auto-subnet.jinja", properties=
     #        "peerIp=PEER_VPN_IP,sharedSecret=SECRET,sourceRanges=PEERED_RANGE")
     pass
-
+  '''
 
 if __name__ == "__main__":
 
