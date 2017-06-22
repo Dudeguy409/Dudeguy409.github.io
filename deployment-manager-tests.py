@@ -194,10 +194,10 @@ def deploy_http_server(deployment_name, config_path, project):
 
 def setUpModule():
   if create_new_project:
-    properties = ("\"PROJECT_NAME:'" + new_proj_name + "',ORGANIZATION_ID:'"
+    properties = ("\"PROJECT_NAME:'" + new_proj_name + "', ORGANIZATION_ID:'"
                   + new_proj_org
-                  + "',BILLING_ACCOUNT:'" + new_proj_billing_account
-                  + "',SERVICE_ACCOUNT_TO_CREATE:'" + new_proj_account_to_create
+                  + "', BILLING_ACCOUNT:'" + new_proj_billing_account
+                  + "', SERVICE_ACCOUNT_TO_CREATE:'" + new_proj_account_to_create
                   + "', SERVICE_ACCOUNTS: " + new_proj_service_account_a + " " + new_proj_service_account_b
                   + "\"")
     create_deployment(new_proj_deployment_name, "config-template.jinja",
