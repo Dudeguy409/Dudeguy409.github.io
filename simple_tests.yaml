@@ -1,2 +1,2 @@
-- - build-config-vm
-  - config-path: build_configuration/vm.yaml
+- - iam
+  - config-path: iam/jinja/accessible_resource.yaml
